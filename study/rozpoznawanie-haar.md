@@ -97,6 +97,6 @@ classifier.detectMultiScale(
 )
 ```
 * `scaleFactor` - obraz zadany do klasyfikatora może mieć dowolny wymiar. Obrazy treningowe mogły nie być tego samego rozmiaru i stąd niezbędne będzie krokowe skalowanie w dół obrazu, na którym mamy coś wykryć. Parametr `scaleFactor` określa jak bardzo mamy zmniejszać obraz `image` w po każdej iteracji. Przykładowo zalecana wartość `1.05` będzie zmniejszała obraz o 5% po każdej iteracji. Im mniejsza wartość tym lepsza dokładność, ale też dłuższy czas przetwarzania.
-* `minNeighbors` - jak dokładny ma być algorytm? Im wyższa wartośc tym wyższa dokładność, ale też dłuższy czas ptrzetwarzania. Zalecana jest wartość `3-6`. Parametr opcjonalny.
-* `minSize` - najmniejszy, dopusczalny rozmiar wykrywanego obiektu w pikselach. Zalecane jest 30x30 pikseli.
+* `minNeighbors` - jak dokładny ma być algorytm? Im wyższa wartośc tym wyższa dokładność, ale też dłuższy czas ptrzetwarzania. Zalecana jest wartość `3-6`. 
+* `minSize` - najmniejszy, dopusczalny rozmiar wykrywanego obiektu w pikselach. Zalecane jest 30x30 pikseli. Parametr opcjonalny.
 * `maxSize` - największy, dopuszczalny rozmair wykrywanego obiektu w pikselach. Parametr opcjonalny.
