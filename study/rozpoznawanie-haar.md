@@ -5,6 +5,7 @@ Notatki na podstawie materiałów:
 * [*Dokumentacja OpenCV - trenowanie klasyfikatora*](https://docs.opencv.org/4.2.0/dc/d88/tutorial_traincascade.html)
 * [*Dokumentacja OpenCV - używanie klasyfikatora*](https://docs.opencv.org/4.2.0/db/d28/tutorial_cascade_classifier.html)
 * [*OpenCV Python Tutorial #8 - Face and Eye Detectio*](https://www.youtube.com/watch?v=mPCZLOVTEc4&ab_channel=TechWithTim)
+* [*Recommended values for OpenCV detectMultiScale() parameters*](https://stackoverflow.com/questions/20801015/recommended-values-for-opencv-detectmultiscale-parameters)
 
 ## Typy *Cascade Calssifiers*
 * **Haar** - dokładniejszy
