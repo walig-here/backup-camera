@@ -5,6 +5,7 @@ Notatki na podstawie materiałów:
 * [*Dokumentacja OpenCV - trenowanie klasyfikatora*](https://docs.opencv.org/4.2.0/dc/d88/tutorial_traincascade.html)
 * [*Dokumentacja OpenCV - używanie klasyfikatora*](https://docs.opencv.org/4.2.0/db/d28/tutorial_cascade_classifier.html)
 * [*OpenCV Python Tutorial #8 - Face and Eye Detectio*](https://www.youtube.com/watch?v=mPCZLOVTEc4&ab_channel=TechWithTim)
+* [*Recommended values for OpenCV detectMultiScale() parameters*](https://stackoverflow.com/questions/20801015/recommended-values-for-opencv-detectmultiscale-parameters)
 
 ## Typy *Cascade Calssifiers*
 * **Haar** - dokładniejszy
@@ -96,6 +97,6 @@ classifier.detectMultiScale(
 )
 ```
 * `scaleFactor` - obraz zadany do klasyfikatora może mieć dowolny wymiar. Obrazy treningowe mogły nie być tego samego rozmiaru i stąd niezbędne będzie krokowe skalowanie w dół obrazu, na którym mamy coś wykryć. Parametr `scaleFactor` określa jak bardzo mamy zmniejszać obraz `image` w po każdej iteracji. Przykładowo zalecana wartość `1.05` będzie zmniejszała obraz o 5% po każdej iteracji. Im mniejsza wartość tym lepsza dokładność, ale też dłuższy czas przetwarzania.
-* `minNeighbors` - jak dokładny ma być algorytm? Im wyższa wartośc tym wyższa dokładność, ale też dłuższy czas ptrzetwarzania. Zalecana jest wartość `3-6`. Parametr opcjonalny.
-* `minSize` - najmniejszy, dopusczalny rozmiar wykrywanego obiektu w pikselach. Zalecane jest 30x30 pikseli.
+* `minNeighbors` - jak dokładny ma być algorytm? Im wyższa wartośc tym wyższa dokładność, ale też dłuższy czas ptrzetwarzania. Zalecana jest wartość `3-6`. 
+* `minSize` - najmniejszy, dopusczalny rozmiar wykrywanego obiektu w pikselach. Zalecane jest 30x30 pikseli. Parametr opcjonalny.
 * `maxSize` - największy, dopuszczalny rozmair wykrywanego obiektu w pikselach. Parametr opcjonalny.
