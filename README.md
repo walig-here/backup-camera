@@ -21,3 +21,9 @@ Do programu dostarczona zostanie również opisująca jego działanie oraz proce
 
 ### Dodatkowe założenia
 * Program niekoniecznie musi działać na realnym, odstarczanym w czasie rzeczywistym nagraniu z kamery. Priorytetmowym zadaniem będzie zatem wytowrzenie programu, który działać będzie na już gotowych nagraniach.
+
+## Struktura repozytorium
+* `gfx` - zdjęcia oraz wideo używane w projekcie
+* `src` - skrypty języka Python składające się na tworzoną aplikację
+* `study` - materiały pomocnicze, tyczące się możliwości biblioteki *OpenCV*
+* `docs` - dokumentacja projektu
