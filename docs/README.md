@@ -1,0 +1,2 @@
+# Dokumentacja
+* [Dokumentacja z etapu I (dokument *MS Word*)](https://politechnikawroclawska-my.sharepoint.com/:w:/g/personal/264015_student_pwr_edu_pl/ESmvTPKYCZFBjcCz9TAiPskBO_g8tX-jbdjDwP7HCnu5aA?e=zC9AZW)
