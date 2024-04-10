@@ -1,0 +1,1 @@
+Zbiór obrazów oraz wideo używanych w projekcie.
