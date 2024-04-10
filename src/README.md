@@ -9,7 +9,7 @@ py -m venv ../.venv
 2. Aktywacja wirutalnego środowiska
 
 ```bash
-./.venv/Scripts/activate.bat
+../.venv/Scripts/activate.bat
 ```
 
 3. Zainstalowanie wymaganych zależności.
