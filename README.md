@@ -25,9 +25,9 @@ Do programu dostarczona zostanie również opisująca jego działanie oraz proce
 * `src` - skrypty języka Python składające się na tworzoną aplikację
 * `study` - materiały pomocnicze, tyczące się możliwości biblioteki *OpenCV*
 
-### Sczegółowe założenia
+## Sczegółowe założenia
 
-#### Pojazd i kamera
+### Pojazd i kamera
 * Projekt zakłada, że obraz będzie zbierany przez kamerę z dowolnego pojazdu.
 * Projekt zakłada, że typ kamery jest dowolny. Obejmuje to:
   *  Dowolny kąt widzenia: Kamery mogą mieć różne kąty widzenia, które są dostosowane do konkretnych potrzeb aplikacji.
@@ -35,11 +35,11 @@ Do programu dostarczona zostanie również opisująca jego działanie oraz proce
   *  Częstotliwość fal: Kamery mogą działać w różnych zakresach fal elektromagnetycznych, takich jak podczerwień, światło widzialne itd.
 * Projekt nie narzuca ograniczeń co do umieszczenia kamery na pojeździe. Kamery mogą być umieszczone w dowolnym miejscu na pojeździe, które umożliwia skuteczne zbieranie danych z otoczenia.
 
-#### Źródła nagrań
+### Źródła nagrań
 * Projekt umożliwia pozyskiwanie obrazu z rzeczywistych pojazdów znajdujących się w terenie. Jest to proces, w którym obraz jest zbierany w czasie rzeczywistym z kamery zamontowanej na danym pojeździe.
 * Projekt zakłada także możliwość pozyskiwania obrazu na bazie nagrań dostępnych w Internecie. Obejmuje to korzystanie z istniejących nagrań wideo, które zostały udostępnione publicznie i mogą być używane do celów analizy.
 
-#### Struktura systemu
+### Struktura systemu
 * System składa się z dwóch głównych elementów: konfiguratora i oprogramowania wykonawczego.
 * Konfigurator umożliwia wprowadzanie ustawień dla oprogramowania wykonawczego poprzez interfejs graficzny, który może być np. interfejsem webowym lub inną dowolną technologią.
 * Proponowane ustawienia obejmują:
