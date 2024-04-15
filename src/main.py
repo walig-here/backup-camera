@@ -2,7 +2,7 @@ import cv2 as cv
 
 
 def main():
-    video = cv.VideoCapture(0)
+    video = cv.VideoCapture(1)
     is_running = True
     view_canny = False
     threshold_1 = 50
