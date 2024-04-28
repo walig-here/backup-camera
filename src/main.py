@@ -2,7 +2,7 @@ import cv2 as cv
 
 
 def main():
-    video = cv.VideoCapture(1)
+    video = cv.VideoCapture(0)
     is_running = True
     view_canny = False
     threshold_1 = 50
@@ -25,6 +25,7 @@ def main():
             threshold_1 = threshold_1 - 10 if threshold_1 >= 10 else 0
             
     video.release()
+    
     
 if __name__ == '__main__':
     main()
