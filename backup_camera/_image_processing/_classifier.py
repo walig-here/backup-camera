@@ -5,4 +5,6 @@ jest użycie klasyfikatora typu Haar Cascades). Efektem jego pracy powinny
 być metadane dotyczące rozpoznanych na obrazie obiektów. 
 """
 
-
+class Classifier:
+    def detect_objects(self, frame):
+        return None
