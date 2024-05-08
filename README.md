@@ -54,3 +54,30 @@ Do programu dostarczona zostanie również opisująca jego działanie oraz proce
   * Obraz na żywo z kamery IP połączonej przez sieć, na przykład z kamery zamontowanej na pojeździe
 * W trakcie działania oprogramowanie wykonawcze wyświetla obraz z kamery w odpowiednim oknie i rysuje na nim odpowiednie elementy, takie jak linie, alerty, tagi, obwiednie wokół wykrytych obiektów itp.
 * Na obrazie można również nakładać elementy developerskie, takie jak liczby i tekst pomocny w analizie działania programu, na przykład procent skuteczności wykrycia danego obiektu.
+
+## Uruchomienie aplikacji (Windows Command Line)
+
+1. Utworzenie wirtualnego środowiska (o ile jeszcze takie nie istnieje) w głównym katalogu projektu.
+
+```bash
+py -m venv ../.venv
+```
+
+2. Aktywacja wirutalnego środowiska
+
+```bash
+../.venv/Scripts/activate.bat
+```
+
+3. Zainstalowanie wymaganych zależności.
+
+```bash
+pip install -r ../requirements.txt
+```
+
+4. Uruchomienie skryptu `main.py`
+
+```bash
+py main.py
+```
+
