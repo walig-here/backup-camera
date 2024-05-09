@@ -6,6 +6,7 @@ z silnika przetwarzania obrazu. Jego częścią będą również menu służące
 konfiguracji systemu. 
 """
 import tkinter as tk
+from tkinter import filedialog
 
 import cv2 as cv
 from cv2.typing import MatLike
@@ -15,6 +16,7 @@ from PIL import ImageTk
 
 from backup_camera.application import Application
 from backup_camera._image_processing.image_porcessor import ImageProcessingEngine
+from backup_camera._image_receiver import ImageReceiver
 
 
 class UserInteface:
@@ -28,56 +30,25 @@ class UserInteface:
         self._video_source = video_source
         
         self._menubar = tk.Menu(master=self._window)
-        
-        self._mode_menu = tk.Menu(master=self._menubar, tearoff=0)
-        self._selected_camera_mode = tk.IntVar()
-        self._selected_camera_mode.set(0)
-        self._mode_menu.add_radiobutton(
-            label='Park assistant', 
-            variable=self._selected_camera_mode, 
-            value=0,
-            command=self._enable_park_assistant
-        )
-        self._mode_menu.add_radiobutton(
-            label='Rearview mirror', 
-            variable=self._selected_camera_mode, 
-            value=1,
-            command=self._enable_mirrow
-        )
-        self._mode_menu.add_radiobutton(
-            label='Configuration', 
-            variable=self._selected_camera_mode, 
-            value=2,
-            command=self._enable_config_mode
-        )
-        self._menubar.add_cascade(menu=self._mode_menu, label='Mode')
-        
+        self._init_camera_mode_menu()
+        self._init_source_menu()
         self._window.config(menu=self._menubar)
         
         self._display = tk.Label(master=self._window)
         self._display.pack(fill='both')
     
-    def _enable_mirrow(self):
-        if self._menubar.index('end') > 1:
-            self._menubar.delete(self._menubar.index('end'))
+    def _enter_mirror_mode(self):
+        self._reload_default_menu_bar_layout()
     
-    def _enable_park_assistant(self):
-        if self._menubar.index('end') > 1:
-            self._menubar.delete(self._menubar.index('end'))
+    def _enter_park_assistant_mode(self):
+        self._reload_default_menu_bar_layout()
     
-    def _enable_config_mode(self):
-        if self._selected_camera_mode.get() != 2:
-            return
-        if self._menubar.index('end') > 1:
-            self._menubar.delete(self._menubar.index('end'))
+    def _enter_config_mode(self):
+        self._reload_default_menu_bar_layout()
         
         self._config_menu = tk.Menu(master=self._menubar, tearoff=0)
         self._config_menu.add_checkbutton(label='Debug mode')
         self._config_menu.add_separator()
-        self._config_menu.add_command(
-            label='Select source',
-            command=self._event_handler.set_source
-        )
         self._config_menu.add_command(
             label='Image properties', 
             command=self._event_handler.set_image_properties
@@ -97,6 +68,51 @@ class UserInteface:
         )
         self._menubar.add_cascade(menu=self._config_menu, label='Configuration')
     
+    def _reload_default_menu_bar_layout(self):
+        if self._menubar.index('end') > 2:
+            self._menubar.delete(self._menubar.index('end'))
+    
+    def _init_source_menu(self):
+        self._source_menu = tk.Menu(master=self._menubar, tearoff=0)
+        self._selected_source_index = tk.IntVar()
+        
+        sources = ImageReceiver.get_available_sources()
+        for source_name in sources:
+            self._source_menu.add_radiobutton(
+                label=source_name, 
+                variable=self._selected_source_index, 
+                value=sources[source_name],
+                command=lambda source_index=sources[source_name]: self._event_handler.set_source(source_index)
+            )
+            
+        self._selected_source_index.set(-2)
+        self._menubar.add_cascade(menu=self._source_menu, label='Source')
+        
+    
+    def _init_camera_mode_menu(self):
+        self._mode_menu = tk.Menu(master=self._menubar, tearoff=0)
+        self._selected_camera_mode = tk.IntVar()
+        self._selected_camera_mode.set(0)
+        self._mode_menu.add_radiobutton(
+            label='Park assistant', 
+            variable=self._selected_camera_mode, 
+            value=0,
+            command=self._enter_park_assistant_mode
+        )
+        self._mode_menu.add_radiobutton(
+            label='Rearview mirror', 
+            variable=self._selected_camera_mode, 
+            value=1,
+            command=self._enter_mirror_mode
+        )
+        self._mode_menu.add_radiobutton(
+            label='Configuration', 
+            variable=self._selected_camera_mode, 
+            value=2,
+            command=self._enter_config_mode
+        )
+        self._menubar.add_cascade(menu=self._mode_menu, label='Mode')
+    
     def show(self) -> None:
         self._updateVideoFrame(self._video_source.process_next_frame())
         self._window.mainloop()
@@ -108,6 +124,9 @@ class UserInteface:
         self._display.photo_image = video_frame
         self._display.configure(image=video_frame)
         self._display.after(10, lambda frame=self._video_source.process_next_frame(): self._updateVideoFrame(frame))
+    
+    def select_video_file(self):
+        return filedialog.askopenfilename(filetypes=[("MP4 Files", "*.mp4")])
         
     @staticmethod
     def generate_placeholder_image() -> MatLike:

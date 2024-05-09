@@ -23,6 +23,7 @@ class Application:
     
     def run(self):
         self._ui.show()
+        self._image_receiver.end_capture()
     
     def set_image_properties(self):
         print('IMAGE PROPERTIES!')
@@ -33,6 +34,15 @@ class Application:
     def set_detection_properties(self):
         print('DETECTIOn PROPERTIES!')
     
-    def set_source(self):
-        print('SET SOURCE!')
+    def set_source(self, source_index: int):
+        if source_index >= 0:
+            self._image_receiver.start_capture(source_index)
+        elif source_index == -1:
+            filename = self._ui.select_video_file()
+            if filename == '':
+                self._image_receiver.end_capture()
+            else:
+                self._image_receiver.start_capture(filename)
+        else:
+            self._image_receiver.end_capture()
     
