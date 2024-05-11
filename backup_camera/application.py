@@ -20,8 +20,10 @@ class Application:
         self._ui.show()
         self._image_receiver.end_capture()
     
-    def set_image_properties(self):
-        print('IMAGE PROPERTIES!')
+    def set_image_properties(self, brightness, contrast, saturation):
+        print(f'brightness={brightness}')
+        print(f'contrast={contrast}')
+        print(f'saturation={saturation}')
         
     def set_guidelines_properties(self):
         print('GUIDELINES PROPERTIES!')
