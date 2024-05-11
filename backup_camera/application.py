@@ -10,7 +10,7 @@ from backup_camera._image_receiver import ImageReceiver
 
 class Application:
     def __init__(self, display_size: tuple[int, int]) -> None:
-        from backup_camera._user_interface import UserInteface   # used here to avoid circural import
+        from backup_camera._user_interface.user_interface import UserInteface   # used here to avoid circural import
         
         self._image_receiver = ImageReceiver()
         self._image_processor = ImageProcessingEngine(display_size, self._image_receiver)
@@ -25,14 +25,19 @@ class Application:
         print(f'contrast={contrast}')
         print(f'saturation={saturation}')
         
-    def set_guidelines_properties(self):
-        print('GUIDELINES PROPERTIES!')
+    def set_guidelines_properties(self, number_of_lines, x_offset, y_offset, spacing):
+        print(f'number-of-lines={number_of_lines}')
+        print(f'x-offset={x_offset}')
+        print(f'y-offset={y_offset}')
+        print(f'spacing={spacing}')
     
-    def set_detection_properties(self):
-        print('DETECTION PROPERTIES!')
+    def set_detection_properties(self, detect_cars, detect_bicycles, detect_pedestrians):
+        print(f'detect-cars={detect_cars}')
+        print(f'detect-bicycles={detect_bicycles}')
+        print(f'detect-pedestrians={detect_pedestrians}')
     
-    def change_guidelines_visibility(self):
-        print('GUIDELINES HIDDEN')
+    def set_guidelines_visibility(self, guidelines_hidden):
+        print(f'guidelines-hidden={guidelines_hidden}')
     
     def change_mute_sounds(self):
         print('MUTE SOUNDS')

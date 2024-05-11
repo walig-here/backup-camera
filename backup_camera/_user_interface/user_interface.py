@@ -7,6 +7,7 @@ konfiguracji systemu.
 """
 import tkinter as tk
 from tkinter import filedialog
+from tkinter import ttk
 
 import cv2 as cv
 from cv2.typing import MatLike
@@ -17,40 +18,9 @@ from PIL import ImageTk
 from backup_camera.application import Application
 from backup_camera._image_processing.image_porcessor import ImageProcessingEngine
 from backup_camera._image_receiver import ImageReceiver
-
-
-class _ImagePropertiesFrame(tk.Frame):
-    def __init__(self, master, event_handler: Application) -> None:
-        super().__init__(master, border=1)
-        self._event_handler = event_handler
-        
-        self._label = tk.Label(self, text='Image Properties')
-        self._label.pack()
-        self._brightness = tk.Scale(
-            self, from_=-100, to=100, orient=tk.HORIZONTAL, 
-            label='Brightness',
-            command=self._settings_changed
-        )
-        self._brightness.pack()
-        self._contrast = tk.Scale(
-            self, from_=-100, to=100, orient=tk.HORIZONTAL, 
-            label='Contrast',
-            command=self._settings_changed
-        )
-        self._contrast.pack()
-        self._saturation = tk.Scale(
-            self, from_=-100, to=100, orient=tk.HORIZONTAL, 
-            label='Saturation',
-            command=self._settings_changed
-        )
-        self._saturation.pack()
-    
-    def _settings_changed(self, _):
-        self._event_handler.set_image_properties(
-            brightness=self._brightness.get(),
-            contrast=self._contrast.get(),
-            saturation=self._saturation.get()
-        )
+from backup_camera._user_interface._detection_properties_frame import DetectionPropertiesFrame
+from backup_camera._user_interface._guidelines_properties_frame import GuidelinesPropertiesFrame
+from backup_camera._user_interface._image_properties_frame import ImagePropertiesFrame
 
 
 class UserInteface:
@@ -81,8 +51,13 @@ class UserInteface:
         self._mute_label = tk.Label(self._window, text='MUTED')
         self._mute_label.pack_forget()
         
-        self._image_properties_frame = _ImagePropertiesFrame(master=self._window, event_handler=self._event_handler)
-
+        self._image_properties_frame = ImagePropertiesFrame(master=self._window, event_handler=self._event_handler)
+        self._guidelines_properties_frame = GuidelinesPropertiesFrame(self._window, 
+                                                                      self._event_handler, 
+                                                                      self._guidelines_hidden)
+        self._detection_properties_frame = DetectionPropertiesFrame(self._window,
+                                                                    self._event_handler,
+                                                                    self._mute_sounds)
         self._enter_mirror_mode()
     
     def _enter_mirror_mode(self):
@@ -106,32 +81,51 @@ class UserInteface:
         self._config_menu.add_checkbutton(
             label='Guidlines hidden',
             variable=self._guidelines_hidden,
-            command=self._event_handler.change_guidelines_visibility
+            command=self.change_guidelines_visibility
         )
         self._config_menu.add_command(
             label='Open guidelines properties', 
-            command=self._event_handler.set_guidelines_properties
+            command=self._show_guidelines_properties
         )
         self._config_menu.add_separator()
         self._config_menu.add_checkbutton(
-            label='Mute sounds',
+            label='Mute alerts',
             variable=self._mute_sounds,
             command=self._event_handler.change_mute_sounds
         )
-        self._config_menu.add_separator()
         self._config_menu.add_command(
             label='Open detection properties',
-            command=self._event_handler.set_detection_properties
+            command=self._show_detection_properties
         )
         self._menubar.add_cascade(menu=self._config_menu, label='Configuration')
+    
+    def _hide_properties_frame(self):
+        if self._guidelines_properties_frame.winfo_viewable():
+            self._guidelines_properties_frame.place_forget()
+        elif self._image_properties_frame.winfo_viewable():
+            self._image_properties_frame.place_forget()
+        elif self._detection_properties_frame.winfo_viewable():
+            self._detection_properties_frame.place_forget()
     
     def _reload_default_layout(self):
         if self._menubar.index('end') > 2:
             self._menubar.delete(self._menubar.index('end'))
-        self._image_properties_frame.place_forget()
+        self._hide_properties_frame()
     
     def _show_image_properties(self):
+        self._hide_properties_frame()
         self._image_properties_frame.place(x=10, y=40)
+    
+    def _show_guidelines_properties(self):
+        self._hide_properties_frame()
+        self._guidelines_properties_frame.place(x=10, y=40)
+    
+    def _show_detection_properties(self):
+        self._hide_properties_frame()
+        self._detection_properties_frame.place(x=10, y=40)
+    
+    def change_guidelines_visibility(self):
+        self._event_handler.set_guidelines_visibility(self._guidelines_hidden.get())
     
     def _init_source_menu(self):
         self._source_menu = tk.Menu(master=self._menubar, tearoff=0)
