@@ -2,7 +2,8 @@ from backup_camera.application import Application
 
 
 def main():
-    app = Application()
+    scale = 1.2
+    app = Application((int(1280 // scale), int(720 // scale)))
     app.run()
     
 if __name__ == '__main__':

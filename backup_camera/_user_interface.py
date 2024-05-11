@@ -20,14 +20,18 @@ from backup_camera._image_receiver import ImageReceiver
 
 
 class UserInteface:
-    def __init__(self, parent_application: Application, video_source: ImageProcessingEngine) -> None:
+    def __init__(self, display_size: tuple[int, int], parent_application: Application, 
+                 video_source: ImageProcessingEngine) -> None:
         self._window = tk.Tk()
         self._window.title('Backup Camera')
-        self._window.geometry('1280x720')
+        self._window.geometry(f'{display_size[0]}x{display_size[1]}')
         self._window.resizable(False, False)
         
         self._event_handler = parent_application
         self._video_source = video_source
+        self._display_size = (display_size[1], display_size[0])
+        self._guidelines_hidden = tk.BooleanVar(value=False)
+        self._mute_sounds = tk.BooleanVar(value=False)
         
         self._menubar = tk.Menu(master=self._window)
         self._init_camera_mode_menu()
@@ -47,20 +51,26 @@ class UserInteface:
         self._reload_default_menu_bar_layout()
         
         self._config_menu = tk.Menu(master=self._menubar, tearoff=0)
-        self._config_menu.add_checkbutton(label='Debug mode')
-        self._config_menu.add_separator()
         self._config_menu.add_command(
             label='Image properties', 
             command=self._event_handler.set_image_properties
         )
         self._config_menu.add_separator()
-        self._config_menu.add_checkbutton(label='Guidlines hidden')
+        self._config_menu.add_checkbutton(
+            label='Guidlines hidden',
+            variable=self._guidelines_hidden,
+            command=self._event_handler.change_guidelines_visibility
+        )
         self._config_menu.add_command(
             label='Guidelines properties', 
             command=self._event_handler.set_guidelines_properties
         )
         self._config_menu.add_separator()
-        self._config_menu.add_checkbutton(label='Mute sounds')
+        self._config_menu.add_checkbutton(
+            label='Mute sounds',
+            variable=self._mute_sounds,
+            command=self._event_handler.change_mute_sounds
+        )
         self._config_menu.add_separator()
         self._config_menu.add_command(
             label='Detection properties',
@@ -118,26 +128,26 @@ class UserInteface:
         self._window.mainloop()
     
     def _updateVideoFrame(self, video_frame: MatLike):
-        if video_frame is None or video_frame.shape[1] != 1280 or video_frame.shape[0] != 720:
-            video_frame = UserInteface.generate_placeholder_image()
+        if video_frame is None or video_frame.shape[0] != self._display_size[0]\
+           or video_frame.shape[1] != self._display_size[1]:
+            video_frame = self._generate_placeholder_image()
         video_frame = ImageTk.PhotoImage(Image.fromarray(video_frame))
         self._display.photo_image = video_frame
         self._display.configure(image=video_frame)
-        self._display.after(10, lambda frame=self._video_source.process_next_frame(): self._updateVideoFrame(frame))
+        self._display.after(20, lambda frame=self._video_source.process_next_frame(): self._updateVideoFrame(frame))
     
     def select_video_file(self):
         return filedialog.askopenfilename(filetypes=[("MP4 Files", "*.mp4")])
         
-    @staticmethod
-    def generate_placeholder_image() -> MatLike:
-        image = np.full((720, 1280), 0, dtype=np.uint8)
+    def _generate_placeholder_image(self) -> MatLike:
+        image = np.full(self._display_size, 0, dtype=np.uint8)
         image = cv.putText(
             img=image, 
             text='<NO VIDEO TO DISPLAY>', 
-            org=(160, 370), 
+            org=(self._display_size[1]//4, self._display_size[0] // 2), 
             fontFace=cv.FONT_HERSHEY_PLAIN, 
-            fontScale=5, 
+            fontScale=2, 
             color=(255, 255, 255), 
-            thickness=4
+            thickness=1
         )
         return image

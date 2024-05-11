@@ -10,7 +10,7 @@ from cv2.typing import MatLike
 from cv2 import resize
 
 class Postprocessor:
-    def postprocess(self, frame: MatLike|None, detection_metadata) -> MatLike|None:
+    def postprocess(self, frame: MatLike|None, detection_metadata, image_size: tuple[int, int]) -> MatLike|None:
         if frame is None:
             return None
-        return resize(frame, (1280, 720))
+        return resize(frame, image_size)
