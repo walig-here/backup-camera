@@ -40,15 +40,29 @@ class UserInteface:
         
         self._display = tk.Label(master=self._window)
         self._display.pack(fill='both')
+        
+
+        self._info_frame = tk.Frame(self._window)
+        self._info_frame.place(x=10, y=10)
+        self._mode_label = tk.Label(self._info_frame)
+        self._mode_label.pack(expand=False, fill=tk.NONE, side=tk.LEFT)
+        
+        self._mute_label = tk.Label(self._info_frame, text='MUTED')
+        self._mute_label.pack_forget()
+
+        self._enter_mirror_mode()
     
     def _enter_mirror_mode(self):
-        self._reload_default_menu_bar_layout()
+        self._reload_default_layout()
+        self._mode_label.config(text='REARVIEW MIRROR')
     
     def _enter_park_assistant_mode(self):
-        self._reload_default_menu_bar_layout()
+        self._reload_default_layout()
+        self._mode_label.config(text='PARK ASSISTANT')
     
     def _enter_config_mode(self):
-        self._reload_default_menu_bar_layout()
+        self._reload_default_layout()
+        self._mode_label.config(text='CONFIGURATION')
         
         self._config_menu = tk.Menu(master=self._menubar, tearoff=0)
         self._config_menu.add_command(
@@ -78,7 +92,7 @@ class UserInteface:
         )
         self._menubar.add_cascade(menu=self._config_menu, label='Configuration')
     
-    def _reload_default_menu_bar_layout(self):
+    def _reload_default_layout(self):
         if self._menubar.index('end') > 2:
             self._menubar.delete(self._menubar.index('end'))
     
@@ -102,7 +116,7 @@ class UserInteface:
     def _init_camera_mode_menu(self):
         self._mode_menu = tk.Menu(master=self._menubar, tearoff=0)
         self._selected_camera_mode = tk.IntVar()
-        self._selected_camera_mode.set(0)
+        self._selected_camera_mode.set(1)
         self._mode_menu.add_radiobutton(
             label='Park assistant', 
             variable=self._selected_camera_mode, 
@@ -127,6 +141,12 @@ class UserInteface:
         self._updateVideoFrame(self._video_source.process_next_frame())
         self._window.mainloop()
     
+    def mute(self):
+        if self._mute_sounds.get():
+            self._mute_label.pack(expand=False, fill=tk.NONE, side=tk.LEFT, padx=5)
+        else:
+            self._mute_label.pack_forget()
+
     def _updateVideoFrame(self, video_frame: MatLike):
         if video_frame is None or video_frame.shape[0] != self._display_size[0]\
            or video_frame.shape[1] != self._display_size[1]:

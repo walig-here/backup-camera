@@ -34,6 +34,7 @@ class Application:
     
     def change_mute_sounds(self):
         print('MUTE SOUNDS')
+        self._ui.mute()
     
     def set_source(self, source_index: int):
         if source_index >= 0:
