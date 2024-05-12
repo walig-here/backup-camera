@@ -9,30 +9,49 @@ from backup_camera._image_processing.image_porcessor import ImageProcessingEngin
 from backup_camera._image_receiver import ImageReceiver
 
 class Application:
-    PARK_ASSISTANT_MODE = 1
-    RERVIEW_MIRROR_MODE = 2
-    
-    def __init__(self) -> None:
-        from backup_camera._user_interface import UserInteface   # used here to avoid circural import
+    def __init__(self, display_size: tuple[int, int]) -> None:
+        from backup_camera._user_interface.user_interface import UserInteface   # used here to avoid circural import
         
         self._image_receiver = ImageReceiver()
-        self._image_processor = ImageProcessingEngine(self._image_receiver)
-        self._ui = UserInteface(self, self._image_processor)
-        
-        self._camera_mode = Application.PARK_ASSISTANT_MODE
+        self._image_processor = ImageProcessingEngine(display_size, self._image_receiver)
+        self._ui = UserInteface(display_size, self, self._image_processor)
     
     def run(self):
         self._ui.show()
+        self._image_receiver.end_capture()
     
-    def set_image_properties(self):
-        print('IMAGE PROPERTIES!')
+    def set_image_properties(self, brightness, contrast, saturation):
+        print(f'brightness={brightness}')
+        print(f'contrast={contrast}')
+        print(f'saturation={saturation}')
         
-    def set_guidelines_properties(self):
-        print('GUIDELINES PROPERTIES!')
+    def set_guidelines_properties(self, number_of_lines, x_offset, y_offset, spacing):
+        print(f'number-of-lines={number_of_lines}')
+        print(f'x-offset={x_offset}')
+        print(f'y-offset={y_offset}')
+        print(f'spacing={spacing}')
     
-    def set_detection_properties(self):
-        print('DETECTIOn PROPERTIES!')
+    def set_detection_properties(self, detect_cars, detect_bicycles, detect_pedestrians):
+        print(f'detect-cars={detect_cars}')
+        print(f'detect-bicycles={detect_bicycles}')
+        print(f'detect-pedestrians={detect_pedestrians}')
     
-    def set_source(self):
-        print('SET SOURCE!')
+    def set_guidelines_visibility(self, guidelines_hidden):
+        print(f'guidelines-hidden={guidelines_hidden}')
+    
+    def change_mute_sounds(self):
+        print('MUTE SOUNDS')
+        self._ui.mute()
+    
+    def set_source(self, source_index: int):
+        if source_index >= 0:
+            self._image_receiver.start_capture(source_index)
+        elif source_index == -1:
+            filename = self._ui.select_video_file()
+            if filename == '' or filename == ():
+                self._image_receiver.end_capture()
+            else:
+                self._image_receiver.start_capture(filename)
+        else:
+            self._image_receiver.end_capture()
     

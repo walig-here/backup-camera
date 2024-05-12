@@ -7,9 +7,11 @@ from backup_camera._image_receiver import ImageReceiver
 
 
 class ImageProcessingEngine:
-    def __init__(self, image_receiver: ImageReceiver) -> None:
+    def __init__(self, image_size: tuple[int, int], image_receiver: ImageReceiver) -> None:
         assert image_receiver != None, 'image receiver should not be None!'
         
+        self._image_size = image_size
+
         self._image_receiver = image_receiver
         self._preprocessor = Preprocessor()
         self._classifier = Classifier()
@@ -19,6 +21,6 @@ class ImageProcessingEngine:
         frame = self._image_receiver.get_frame()
         ui_frame, classifier_frame = self._preprocessor.preprocess(frame)
         detection_metadata = self._classifier.detect_objects(classifier_frame)
-        return self._postprocessor.postprocess(ui_frame, detection_metadata)
+        return self._postprocessor.postprocess(ui_frame, detection_metadata, self._image_size)
         
     
