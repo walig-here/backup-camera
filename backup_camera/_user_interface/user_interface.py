@@ -167,7 +167,7 @@ class UserInteface:
         )
         self._menubar.add_cascade(menu=self._mode_menu, label='Mode')
     
-    def show(self) -> None:
+    def show(self, image_parameters) -> None:
         self._updateVideoFrame(self._video_source.process_next_frame())
         self._window.mainloop()
     
