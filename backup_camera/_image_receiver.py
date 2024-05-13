@@ -9,8 +9,14 @@ systemu na przygotowanych wcześniej nagraniach.
 import cv2 as cv
 from cv2.typing import MatLike
 
+
+MAX_NUMBER_OF_CAMERAS = 10
+NO_VIDEO_CAPTURE = -2
+CAPTURE_VIDEO_FILE = -1
+
+
 class ImageReceiver:
-    
+        
     def __init__(self) -> None:
         self._video_capture = None
     
@@ -33,10 +39,11 @@ class ImageReceiver:
     @staticmethod
     def get_available_sources() -> dict[str, int]:
         available_sources = {
-            'None': -2,
-            'Video file': -1
+            'None': NO_VIDEO_CAPTURE,
+            'Video file': CAPTURE_VIDEO_FILE
         }
-        for i in range(10):
+        
+        for i in range(MAX_NUMBER_OF_CAMERAS):
             cap = cv.VideoCapture(i)
             if cap.isOpened():
                 available_sources[f'Camera {i}'] = i
