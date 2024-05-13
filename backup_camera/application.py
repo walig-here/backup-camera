@@ -26,7 +26,7 @@ class Application:
         self.application_mode = ApplicationMode.PARK_ASSISTANT
         self._image_parameters = ImageParameters()
         self._image_receiver = ImageReceiver()
-        self._image_processor = ImageProcessingEngine(display_size, self._image_receiver, self._image_parameters)
+        self._image_processor = ImageProcessingEngine(display_size, self._image_receiver, self._image_parameters, self)
         self._ui = UserInteface(display_size, self, self._image_processor)
 
     def run(self):

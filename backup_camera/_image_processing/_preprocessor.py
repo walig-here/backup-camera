@@ -6,26 +6,33 @@ się na obrazie elementów. Druga powinna być przystosowana do prezentacji
 na interfejsie graficznym (zastosowanie efektów dot. jasności, kontrastu, 
 saturacji itd.). 
 """
-import math
 import numpy as np
 import cv2 as cv
 from cv2.typing import MatLike
+
 from backup_camera._image_processing.image_parameters import ImageParameters
 
 class Preprocessor:
     yellow = (24, 202, 247)
     max_horizontal_lines = 3
 
-    def preprocess(self, frame: MatLike|None, image_parameters: ImageParameters|None) -> tuple[MatLike|None, MatLike|None]:
+    def preprocess(self, frame: MatLike|None, image_parameters: ImageParameters|None, 
+                   application_mode) -> tuple[MatLike|None, MatLike|None]:
         if frame is None:
             return (None, None)
-        return (self._preprocess_for_ui(frame, image_parameters), self._preprocess_for_classifier(frame))
+        return (
+            self._preprocess_for_ui(frame, image_parameters, application_mode), 
+            self._preprocess_for_classifier(frame)
+        )
     
-    def _preprocess_for_ui(self, frame, image_parameters):
+    def _preprocess_for_ui(self, frame, image_parameters, application_mode):
+        from backup_camera.application import ApplicationMode # added here to avoid circural import
+        
         frame = self.apply_saturation(frame, image_parameters.saturation)
         frame = self.apply_brightness_contrast(frame, image_parameters.brightness, image_parameters.contrast)
         if not image_parameters.guidelines_hidden and \
-            image_parameters.number_of_lines > 0: # add and mode != rearview mirror
+           image_parameters.number_of_lines > 0 and \
+           application_mode != ApplicationMode.REARWIEV_MIRROR:
             self._apply_lines(frame, image_parameters)
         return frame
     
