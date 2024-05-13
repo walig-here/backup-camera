@@ -7,10 +7,11 @@ obramowań zawierających rozpoznane obiekty. Wytworzoną przez siebie wersję
 obrazu przesyła do interfejsu graficznego. 
 """
 from cv2.typing import MatLike
-from cv2 import resize
+import cv2 as cv
 
 class Postprocessor:
     def postprocess(self, frame: MatLike|None, detection_metadata, image_size: tuple[int, int]) -> MatLike|None:
         if frame is None:
             return None
-        return resize(frame, image_size)
+        frame = cv.cvtColor(frame, cv.COLOR_BGR2RGB)
+        return cv.resize(frame, image_size)

@@ -1,5 +1,6 @@
 from backup_camera.application import Application
-
+from backup_camera._image_processing._preprocessor import Preprocessor
+import cv2 as cv
 
 def main():
     scale = 1.2
@@ -8,3 +9,4 @@ def main():
     
 if __name__ == '__main__':
     main()
+    

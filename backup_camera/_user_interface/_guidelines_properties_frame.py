@@ -36,7 +36,7 @@ class GuidelinesPropertiesFrame(tk.Frame):
         self._x_offset.pack()
         
         self._y_offset = tk.Scale(
-            self, from_=-100, to=100, orient=tk.HORIZONTAL, 
+            self, from_=0, to=100, orient=tk.HORIZONTAL, 
             label='Offset Y',
             command=self._settings_changed
         ) 
