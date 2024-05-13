@@ -23,8 +23,9 @@ class Preprocessor:
     def _preprocess_for_ui(self, frame, image_parameters):
         frame = self.apply_saturation(frame, image_parameters.saturation)
         frame = self.apply_brightness_contrast(frame, image_parameters.brightness, image_parameters.contrast)
-        if not image_parameters.guidelines_hidden:
-            self._draw_lines(frame)
+        if not image_parameters.guidelines_hidden and \
+            image_parameters.number_of_lines > 0: # add and mode != rearview mirror
+            self._draw_lines(frame, image_parameters)
         return frame
     
     def _preprocess_for_classifier(self, frame):
@@ -61,7 +62,9 @@ class Preprocessor:
 
         return buf
     
-    def _draw_lines(self, frame):
+    def _draw_lines(self, frame, image_parameters: ImageParameters):
+        SLIDER_MAX = 100
+
         width, height = frame.shape[1], frame.shape[0]
         single_line_height = int(0.11 * height)
         line_thickness = int(0.01 * width)
@@ -77,45 +80,83 @@ class Preprocessor:
         first_y = height - single_line_height
         second_y = first_y - single_line_height
         third_y = second_y - single_line_height
-        print(first_y, second_y, third_y, height)
+        
 
-        self._draw_line(frame, (x_left, height), (x_left + single_line_angle, first_y+1), self.yellow, line_thickness)
-        self._draw_line(frame, (x_right, height), (x_right - single_line_angle, first_y+1), self.yellow, line_thickness)
+        # CALCULATING HOW 1 on Y OFFSET SLIDER CORRESPONDS TO HEIGHT CHANGE:
+        height_remaining = height
+
+        if image_parameters.number_of_lines == 1:
+            height_remaining -= first_y
+        elif image_parameters.number_of_lines == 2:
+            height_remaining -= second_y
+        else:
+            height_remaining -= third_y
+
+        height_change = 1 if np.floor(height_remaining / SLIDER_MAX) == 0 \
+            else np.floor(height_remaining / SLIDER_MAX) 
+        y_offset = int(    np.min([image_parameters.y_offset * height_change, height_remaining])  )
+        single_line_y_offset = y_offset // image_parameters.number_of_lines
+        # ------------------------------------------------------------------
+        
+
+        point1 = (x_left, height - single_line_y_offset)
+        point2 = (x_left + single_line_angle, first_y+1 - single_line_y_offset)
+        self._draw_line(frame, point1, point2, self.yellow, line_thickness)
+
+        point1 = (x_right, height - single_line_y_offset)
+        point2 = (x_right - single_line_angle, first_y+1 - single_line_y_offset)
+        self._draw_line(frame, point1, point2, self.yellow, line_thickness)
+        
         y_coordinate = first_y + int(np.ceil(line_thickness/2)) + 1
         x_left = x_left + single_line_angle
         x_right = x_right - single_line_angle
-        self._draw_line(frame, (x_left, y_coordinate),
-                            (x_left + horizontal_line, y_coordinate),
-                            self.yellow, line_thickness)
-        self._draw_line(frame, (x_right, y_coordinate),
-                            (x_right - horizontal_line, y_coordinate),
-                            self.yellow, line_thickness)
+        point1 = (x_left, y_coordinate - single_line_y_offset)
+        point2 = (x_left + horizontal_line, y_coordinate - single_line_y_offset)
+        self._draw_line(frame, point1, point2, self.yellow, line_thickness)
 
-        if True: # if number of lines > 1:
-            self._draw_line(frame, (x_left, first_y), (x_left + single_line_angle, second_y+1), self.yellow, line_thickness)
-            self._draw_line(frame, (x_right, first_y), (x_right - single_line_angle, second_y+1), self.yellow, line_thickness)
+        point1 = (x_right, y_coordinate - single_line_y_offset)
+        point2 = (x_right - horizontal_line, y_coordinate - single_line_y_offset)
+        self._draw_line(frame, point1, point2, self.yellow, line_thickness)
+
+        if image_parameters.number_of_lines > 1: # if number of lines = 2 or 3:
+            point1 = (x_left, first_y - single_line_y_offset)
+            point2 = (x_left + single_line_angle, second_y+1 - single_line_y_offset)
+            self._draw_line(frame, point1, point2, self.yellow, line_thickness)
+
+            point1 = (x_right, first_y - single_line_y_offset)
+            point2 = (x_right - single_line_angle, second_y+1 - single_line_y_offset)
+            self._draw_line(frame, point1, point2, self.yellow, line_thickness)
+
             y_coordinate = second_y + int(np.ceil(line_thickness/2)) + 1
             x_left = x_left + single_line_angle
             x_right = x_right - single_line_angle
-            self._draw_line(frame, (x_left, y_coordinate),
-                            (x_left + horizontal_line, y_coordinate),
-                            self.yellow, line_thickness)
-            self._draw_line(frame, (x_right, y_coordinate),
-                            (x_right - horizontal_line, y_coordinate),
-                            self.yellow, line_thickness)
+            point1 = (x_left, y_coordinate - single_line_y_offset)
+            point2 = (x_left + horizontal_line, y_coordinate - single_line_y_offset)
+            self._draw_line(frame, point1, point2, self.yellow, line_thickness)
 
-        if True: # if number of lines > 2:
-            self._draw_line(frame, (x_left, second_y), (x_left + single_line_angle, third_y+1), self.yellow, line_thickness)
-            self._draw_line(frame, (x_right, second_y), (x_right - single_line_angle, third_y+1), self.yellow, line_thickness)
+            point1 = (x_right, y_coordinate - single_line_y_offset)
+            point2 = (x_right - horizontal_line, y_coordinate - single_line_y_offset)
+            self._draw_line(frame, point1, point2, self.yellow, line_thickness)
+
+        if image_parameters.number_of_lines == 3: # if number of lines = 3:
+            point1 = (x_left, second_y - single_line_y_offset)
+            point2 = (x_left + single_line_angle, third_y+1 - single_line_y_offset)
+            self._draw_line(frame, point1, point2, self.yellow, line_thickness)
+
+            point1 = (x_right, second_y - single_line_y_offset)
+            point2 = (x_right - single_line_angle, third_y+1 - single_line_y_offset)
+            self._draw_line(frame, point1, point2, self.yellow, line_thickness)
+
             y_coordinate = third_y + int(np.ceil(line_thickness/2)) + 1
             x_left = x_left + single_line_angle
             x_right = x_right - single_line_angle
-            self._draw_line(frame, (x_left, y_coordinate),
-                            (x_left + horizontal_line, y_coordinate),
-                            self.yellow, line_thickness)
-            self._draw_line(frame, (x_right, y_coordinate),
-                            (x_right - horizontal_line, y_coordinate),
-                            self.yellow, line_thickness)
+            point1 = (x_left, y_coordinate - single_line_y_offset)
+            point2 = (x_left + horizontal_line, y_coordinate - single_line_y_offset)
+            self._draw_line(frame, point1, point2, self.yellow, line_thickness)
+
+            point1 = (x_right, y_coordinate - single_line_y_offset)
+            point2 = (x_right - horizontal_line, y_coordinate - single_line_y_offset)
+            self._draw_line(frame, point1, point2, self.yellow, line_thickness)
 
 
     
