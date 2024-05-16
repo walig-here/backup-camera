@@ -14,8 +14,8 @@ from backup_camera._image_processing.image_parameters import ImageParameters
 
 
 class ApplicationMode(Enum):
-    REARWIEV_MIRROR = 0
-    PARK_ASSISTANT = 1
+    PARK_ASSISTANT = 0
+    REARWIEV_MIRROR = 1
     CONFIGURATION = 2
     
 
@@ -23,17 +23,14 @@ class Application:
     def __init__(self, display_size: tuple[int, int]) -> None:
         from backup_camera._user_interface.user_interface import UserInteface   # used here to avoid circural import
         
-        self.application_mode = ApplicationMode.PARK_ASSISTANT
+        self.application_mode = ApplicationMode.REARWIEV_MIRROR
         self._image_parameters = ImageParameters.load_from_file()
         self._image_receiver = ImageReceiver()
         self._image_processor = ImageProcessingEngine(display_size, self._image_receiver, self._image_parameters, self)
         self._ui = UserInteface(display_size, self, self._image_processor)
 
-    def get_config(self) -> dict:
+    def get_config(self) -> dict[str]:
         return vars(self._image_parameters)
-
-    def get_brightness(self):
-        return self._image_parameters.brightness
 
     def run(self):
         self._ui.show()

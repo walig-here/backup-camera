@@ -10,7 +10,7 @@ import numpy as np
 import cv2 as cv
 from cv2.typing import MatLike
 
-from backup_camera._image_processing.image_parameters import ImageParameters
+from backup_camera._image_processing.image_parameters import ImageParameters, MAX_X_OFFSET, MAX_Y_OFFSET, MAX_SPACING
 
 class Preprocessor:
     yellow = (24, 202, 247)
@@ -71,8 +71,6 @@ class Preprocessor:
         return buf
     
     def _apply_lines(self, frame, image_parameters: ImageParameters):
-        TOTAL_SLIDER_VALUES = 100
-
         width, height = frame.shape[1], frame.shape[0]
         single_line_height = int(0.11 * height)
         line_thickness = int(0.01 * width)
@@ -93,11 +91,11 @@ class Preprocessor:
         # CALCULATING HOW 1 on Y OFFSET SLIDER CORRESPONDS TO HEIGHT CHANGE:
         height_remaining = height - image_parameters.number_of_lines * single_line_height
             
-        height_change = height_remaining * image_parameters.y_offset // TOTAL_SLIDER_VALUES
+        height_change = height_remaining * image_parameters.y_offset // MAX_Y_OFFSET
         # ------------------------------------------------------------------
 
         # CALUCLATING SPACING BETWEEN LINES:
-        spacing = x_left * image_parameters.spacing // TOTAL_SLIDER_VALUES
+        spacing = x_left * image_parameters.spacing // MAX_SPACING
 
         x_left = max(x_left - spacing, 0)
         x_right = min(x_right + spacing, width - 1)       
@@ -106,7 +104,7 @@ class Preprocessor:
         # # CALCULATING HOW 1 on X OFFSET SLIDER CORRESPONDS TO HEIGHT CHANGE:
         width_remaining = x_left
 
-        width_change = width_remaining * image_parameters.x_offset // TOTAL_SLIDER_VALUES
+        width_change = width_remaining * image_parameters.x_offset // MAX_X_OFFSET
         # ------------------------------------------------------------------
 
         point1 = (x_left + width_change, height - height_change)

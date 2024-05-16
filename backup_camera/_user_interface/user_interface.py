@@ -84,30 +84,38 @@ class UserInteface:
         self._parent_application.application_mode = ApplicationMode.CONFIGURATION
         
         self._config_menu = tk.Menu(master=self._menubar, tearoff=0)
+        
         self._config_menu.add_command(
             label='Open image properties', 
             command=self._show_image_properties
         )
+        
         self._config_menu.add_separator()
+        
         self._config_menu.add_checkbutton(
             label='Guidlines hidden',
             variable=self._guidelines_hidden,
             command=self.change_guidelines_visibility
         )
+        
         self._config_menu.add_command(
             label='Open guidelines properties', 
             command=self._show_guidelines_properties
         )
+        
         self._config_menu.add_separator()
+        
         self._config_menu.add_checkbutton(
             label='Mute alerts',
             variable=self._mute_sounds,
             command=self._parent_application.change_mute_sounds
         )
+        
         self._config_menu.add_command(
             label='Open detection properties',
             command=self._show_detection_properties
         )
+        
         self._menubar.add_cascade(menu=self._config_menu, label='Configuration')
     
     def _hide_properties_frame(self):
@@ -156,26 +164,29 @@ class UserInteface:
         
     def _init_mode_menu(self, application_mode: ApplicationMode):
         self._mode_menu = tk.Menu(master=self._menubar, tearoff=0)
-        self._selected_camera_mode = tk.IntVar()
-        self._selected_camera_mode.set(application_mode)
+        self._selected_camera_mode = tk.IntVar(value=application_mode)
+        
         self._mode_menu.add_radiobutton(
             label='Park assistant', 
             variable=self._selected_camera_mode, 
             value=ApplicationMode.PARK_ASSISTANT,
             command=self._enter_park_assistant_mode
         )
+        
         self._mode_menu.add_radiobutton(
             label='Rearview mirror', 
             variable=self._selected_camera_mode, 
             value=ApplicationMode.REARWIEV_MIRROR,
             command=self._enter_mirror_mode
         )
+        
         self._mode_menu.add_radiobutton(
             label='Configuration', 
             variable=self._selected_camera_mode, 
             value=ApplicationMode.CONFIGURATION,
             command=self._enter_config_mode
         )
+        
         self._menubar.add_cascade(menu=self._mode_menu, label='Mode')
     
     def show(self) -> None:
