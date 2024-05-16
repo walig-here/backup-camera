@@ -20,7 +20,7 @@ class DetectionPropertiesFrame(tk.Frame):
         )
         self._mute_sounds_checkbox.pack()
         
-        self._detect_cars = tk.BooleanVar(); self._detect_cars.set(True)
+        self._detect_cars = tk.BooleanVar(value=event_handler.get_config()['detect_cars'])
         self._detect_cars_checbox = tk.Checkbutton(
             self, 
             variable=self._detect_cars, 
@@ -29,7 +29,7 @@ class DetectionPropertiesFrame(tk.Frame):
         )
         self._detect_cars_checbox.pack()
         
-        self._detect_bicycles = tk.BooleanVar(); self._detect_bicycles.set(True)
+        self._detect_bicycles = tk.BooleanVar(value=event_handler.get_config()['detect_bicycles'])
         self._detect_bicycles_checkbox = tk.Checkbutton(
             self, 
             variable=self._detect_bicycles, 
@@ -38,7 +38,7 @@ class DetectionPropertiesFrame(tk.Frame):
         )
         self._detect_bicycles_checkbox.pack()
         
-        self._detect_pedestrians = tk.BooleanVar(); self._detect_pedestrians.set(True)
+        self._detect_pedestrians = tk.BooleanVar(value=event_handler.get_config()['detect_pedestrians'])
         self._detect_pedestrians_checkbox = tk.Checkbutton(
             self, 
             variable=self._detect_pedestrians, 

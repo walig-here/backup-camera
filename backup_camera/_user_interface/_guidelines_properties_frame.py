@@ -27,6 +27,7 @@ class GuidelinesPropertiesFrame(tk.Frame):
         
         self._spacing = tk.Scale(
             self, from_=MIN_SPACING, to=MAX_SPACING, orient=tk.HORIZONTAL, 
+            variable=tk.IntVar(value=event_handler.get_config()['spacing']),
             label='Spacing',
             command=self._settings_changed
         ) 
@@ -34,20 +35,21 @@ class GuidelinesPropertiesFrame(tk.Frame):
         
         self._x_offset = tk.Scale(
             self, from_=MIN_X_OFFSET, to=MAX_X_OFFSET, orient=tk.HORIZONTAL, 
+            variable=tk.IntVar(value=event_handler.get_config()['x_offset']),
             label='Offset X',
             command=self._settings_changed
         ) 
         self._x_offset.pack()
         
         self._y_offset = tk.Scale(
-            self, from_=MIN_Y_OFFSET, to=MAX_Y_OFFSET, orient=tk.HORIZONTAL, 
+            self, from_=MIN_Y_OFFSET, to=MAX_Y_OFFSET, orient=tk.HORIZONTAL,
+            variable=tk.IntVar(value=event_handler.get_config()['y_offset']), 
             label='Offset Y',
             command=self._settings_changed
         ) 
         self._y_offset.pack()
         
-        self._lines = tk.IntVar()
-        self._lines.set(DEFAULT_NUMBER_OF_LINES)
+        self._lines = tk.IntVar(value=event_handler.get_config()['number_of_lines'])
         self._number_of_lines_label = tk.Label(self, text='Number of lines')
         self._number_of_lines_label.pack()
         self._number_of_lines = ttk.Combobox(self, textvariable=self._lines)

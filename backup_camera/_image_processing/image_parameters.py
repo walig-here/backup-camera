@@ -1,3 +1,4 @@
+import json
 from dataclasses import dataclass
 
 
@@ -24,3 +25,16 @@ class ImageParameters:
     x_offset: int = 0
     y_offset: int = 0
     spacing: int = 0
+
+    def save_to_file(self):
+        with open('configuration.json', 'w') as file:
+            dict = vars(self)
+            json.dump(dict, file, indent=4, ensure_ascii=False)
+    
+    @staticmethod
+    def load_from_file():
+        try:
+            with open('configuration.json', 'r') as file:
+                return ImageParameters(**json.load(file))
+        except FileNotFoundError:
+            return ImageParameters()

@@ -38,7 +38,7 @@ class UserInteface:
         self._parent_application = parent_application
         self._video_source = video_source
         self._display_size = (display_size[1], display_size[0])
-        self._guidelines_hidden = tk.BooleanVar(value=False)
+        self._guidelines_hidden = tk.BooleanVar(value=parent_application.get_config()['guidelines_hidden'])
         self._mute_sounds = tk.BooleanVar(value=False)
         
         self._menubar = tk.Menu(master=self._window)

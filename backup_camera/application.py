@@ -24,47 +24,39 @@ class Application:
         from backup_camera._user_interface.user_interface import UserInteface   # used here to avoid circural import
         
         self.application_mode = ApplicationMode.PARK_ASSISTANT
-        self._image_parameters = ImageParameters()
+        self._image_parameters = ImageParameters.load_from_file()
         self._image_receiver = ImageReceiver()
         self._image_processor = ImageProcessingEngine(display_size, self._image_receiver, self._image_parameters, self)
         self._ui = UserInteface(display_size, self, self._image_processor)
 
+    def get_config(self) -> dict:
+        return vars(self._image_parameters)
+
+    def get_brightness(self):
+        return self._image_parameters.brightness
+
     def run(self):
         self._ui.show()
         self._image_receiver.end_capture()
+        self._image_parameters.save_to_file()
     
     def set_image_properties(self, brightness, contrast, saturation):
-        #print(f'brightness={brightness}')                   # TODO need to be removed for release version
-        #print(f'contrast={contrast}')
-        #print(f'saturation={saturation}')
-        
         self._image_parameters.brightness = brightness
         self._image_parameters.contrast = contrast
         self._image_parameters.saturation = saturation
         
     def set_guidelines_properties(self, number_of_lines, x_offset, y_offset, spacing):
-        #print(f'number-of-lines={number_of_lines}')
-        #print(f'x-offset={x_offset}')                       # TODO need to be removed for release version
-        #print(f'y-offset={y_offset}')
-        #print(f'spacing={spacing}')
-        
         self._image_parameters.number_of_lines = number_of_lines
         self._image_parameters.x_offset = x_offset
         self._image_parameters.y_offset = y_offset
         self._image_parameters.spacing = spacing
 
     def set_detection_properties(self, detect_cars, detect_bicycles, detect_pedestrians):
-        #print(f'detect-cars={detect_cars}')                 # TODO need to be removed for release version
-        #print(f'detect-bicycles={detect_bicycles}')
-        #print(f'detect-pedestrians={detect_pedestrians}')
-        
         self._image_parameters.detect_cars = detect_cars
         self._image_parameters.detect_bicycles = detect_bicycles
         self._image_parameters.detect_pedestrians = detect_pedestrians
     
     def set_guidelines_visibility(self, guidelines_hidden):
-        #print(f'guidelines-hidden={guidelines_hidden}')     # TODO need to be removed for release version
-        
         self._image_parameters.guidelines_hidden = guidelines_hidden
     
     def change_mute_sounds(self):
