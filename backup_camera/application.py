@@ -42,11 +42,12 @@ class Application:
         self._image_parameters.contrast = contrast
         self._image_parameters.saturation = saturation
         
-    def set_guidelines_properties(self, number_of_lines, x_offset, y_offset, spacing):
+    def set_guidelines_properties(self, number_of_lines, x_offset, y_offset, spacing, tilt):
         self._image_parameters.number_of_lines = number_of_lines
         self._image_parameters.x_offset = x_offset
         self._image_parameters.y_offset = y_offset
         self._image_parameters.spacing = spacing
+        self._image_parameters.tilt = tilt
 
     def set_detection_properties(self, detect_cars, detect_bicycles, detect_pedestrians):
         self._image_parameters.detect_cars = detect_cars

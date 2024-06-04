@@ -5,7 +5,7 @@ from backup_camera.application import Application
 from backup_camera._image_processing.image_parameters import (
     DEFAULT_NUMBER_OF_LINES, MAX_SPACING, MAX_X_OFFSET, 
     MIN_SPACING, MAX_Y_OFFSET, MIN_X_OFFSET, MIN_Y_OFFSET,
-    NUMBER_OF_LINES_OPTIONS)
+    NUMBER_OF_LINES_OPTIONS, MIN_TILT, MAX_TILT)
 
 
 class GuidelinesPropertiesFrame(tk.Frame):
@@ -44,10 +44,15 @@ class GuidelinesPropertiesFrame(tk.Frame):
         self._y_offset = tk.Scale(
             self, from_=MIN_Y_OFFSET, to=MAX_Y_OFFSET, orient=tk.HORIZONTAL,
             variable=tk.IntVar(value=event_handler.get_config()['y_offset']), 
-            label='Offset Y',
-            command=self._settings_changed
+            label='Offset Y', command=self._settings_changed
         ) 
         self._y_offset.pack()
+        
+        self._tilt = tk.Scale(
+            self, from_=MIN_TILT, to=MAX_TILT, orient=tk.HORIZONTAL,
+            variable=tk.IntVar(value=event_handler.get_config()['tilt']), label='Tilt', command=self._settings_changed
+        )
+        self._tilt.pack()
         
         self._lines = tk.IntVar(value=event_handler.get_config()['number_of_lines'])
         self._number_of_lines_label = tk.Label(self, text='Number of lines')
@@ -68,5 +73,6 @@ class GuidelinesPropertiesFrame(tk.Frame):
             x_offset=self._x_offset.get(),
             y_offset=self._y_offset.get(),
             spacing=self._spacing.get(),
+            tilt=self._tilt.get(),
             number_of_lines=int(self._number_of_lines.get())
         )

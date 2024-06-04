@@ -1,0 +1,14 @@
+{
+    "detect_cars": true,
+    "detect_bicycles": true,
+    "detect_pedestrians": true,
+    "brightness": 0,
+    "contrast": 0,
+    "saturation": 0,
+    "guidelines_hidden": false,
+    "number_of_lines": 3,
+    "x_offset": 0,
+    "y_offset": 0,
+    "spacing": 0,
+    "tilt": 65
+}
