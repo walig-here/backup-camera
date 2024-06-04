@@ -6,9 +6,9 @@
     "contrast": 0,
     "saturation": 0,
     "guidelines_hidden": false,
-    "number_of_lines": 3,
-    "x_offset": 0,
+    "number_of_lines": 2,
+    "x_offset": -15,
     "y_offset": 0,
-    "spacing": 0,
-    "tilt": 65
+    "spacing": 100,
+    "tilt": 54
 }

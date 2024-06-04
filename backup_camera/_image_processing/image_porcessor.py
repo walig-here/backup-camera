@@ -23,10 +23,8 @@ class ImageProcessingEngine:
     
     def process_next_frame(self) -> MatLike|None:
         frame = self._image_receiver.get_frame()
-        ui_frame, classifier_frame = self._preprocessor.preprocess(
-            frame, self.image_parameters,
-            self._parent_app.application_mode
-        )
-        detection_metadata = self._classifier.detect_objects(classifier_frame, self.image_parameters)
-        return self._postprocessor.postprocess(ui_frame, detection_metadata, self._image_size)
+        frame = self._preprocessor.preprocess(frame, self.image_parameters)
+        detection_metadata = self._classifier.detect_objects(frame, self.image_parameters)
+        return self._postprocessor.postprocess(frame, detection_metadata, self._image_size, self.image_parameters,  
+                                               self._parent_app.application_mode)
     
