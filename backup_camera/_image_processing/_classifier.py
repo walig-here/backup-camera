@@ -74,7 +74,7 @@ class Classifier:
         )
         self._cyclist_detector = _ObjectDetector(
             detected_object_type=DetectableObjectType.CYCLIST,
-            dataset_path='haarcascade_license_plate_rus_16stages.xml',
+            dataset_path='haarcascade_russian_plate_number.xml',
             scale_factor=1.05,
             minium_neighbours=1,
             minimum_size_pixels=(30, 30),

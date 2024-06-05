@@ -21,13 +21,16 @@ class Postprocessor:
     _CAR_BOUNDING_BOX_COLOR = (255, 0, 0)
     _PEDESTRIAN_BOUNDING_BOX_COLOR = (0, 255, 0)
     _CYCLIST_BOUNDING_BOX_COLOR = (0, 0, 255)
+    _CAR_ICON = cv.imread('car.png', cv.IMREAD_UNCHANGED)
+    _PEDESTRIAN_ICON = cv.imread('pedestrian.png', cv.IMREAD_UNCHANGED)
+    _CYCLIST_ICON = cv.imread('cyclist.png', cv.IMREAD_UNCHANGED)
     
     def postprocess(self, frame: MatLike|None, detection_metadata,
                     image_parameters: ImageParameters, application_mode) -> MatLike|None:
         if frame is None:
             return None
+        frame = self._draw_bounding_boxes_and_icons(frame, detection_metadata)
         frame = self._draw_guidelines(frame, image_parameters, application_mode)
-        frame = self._draw_bounding_boxes(frame, detection_metadata)
         return cv.cvtColor(frame, cv.COLOR_BGR2RGB)
 
     def _draw_guidelines(self, frame, image_parameters, application_mode):
@@ -39,7 +42,11 @@ class Postprocessor:
                     self._apply_lines(frame, image_parameters)
         return frame
     
-    def _draw_bounding_boxes(self, frame, detection_metatada: list[DetectedObject]):
+    def _draw_bounding_boxes_and_icons(self, frame, detection_metatada: list[DetectedObject]):
+        car_detected = False
+        pedestrian_detected = False
+        cyclist_detected = False
+        
         for detected_object in detection_metatada:
             frame = cv.rectangle(
                 frame, 
@@ -47,6 +54,51 @@ class Postprocessor:
                 Postprocessor.get_bounding_box_color_for_object_type(detected_object.type),
                 6
             )
+            match detected_object.type:
+                case DetectableObjectType.CAR:
+                    car_detected = True
+                case DetectableObjectType.PEDESTRIAN:
+                    pedestrian_detected = True
+                case DetectableObjectType.CYCLIST:
+                    cyclist_detected = True
+        
+        if car_detected:
+            frame = self._draw_icon(frame, DetectableObjectType.CAR)
+        if pedestrian_detected:
+            frame = self._draw_icon(frame, DetectableObjectType.PEDESTRIAN)
+        if cyclist_detected:
+            frame = self._draw_icon(frame, DetectableObjectType.CYCLIST)
+            
+        return frame
+
+    def _draw_icon(self, frame: MatLike, detected_object_type: DetectableObjectType):    
+        match detected_object_type:
+            case DetectableObjectType.CAR:
+                current_icon = Postprocessor._CAR_ICON
+                icon_width = current_icon.shape[1]
+                icon_height = current_icon.shape[0]
+                icon_x = frame.shape[1] // 2 - icon_width // 2
+                icon_y = frame.shape[0] - 10 - icon_height
+            case DetectableObjectType.PEDESTRIAN:
+                current_icon = Postprocessor._PEDESTRIAN_ICON
+                icon_width = current_icon.shape[1]
+                icon_height = current_icon.shape[0]
+                icon_x = frame.shape[1] // 2 - icon_width // 2
+                icon_y = frame.shape[0] - 10 - icon_height
+            case DetectableObjectType.CYCLIST:
+                current_icon = Postprocessor._CYCLIST_ICON
+                icon_width = current_icon.shape[1]
+                icon_height = current_icon.shape[0]
+                icon_x = frame.shape[1] // 2 + icon_width // 2
+                icon_y = frame.shape[0] - 10 - icon_height
+            case _:
+                return frame
+        
+        for x in range(icon_width):
+            for y in range(icon_height):
+                if current_icon[y,x,3] == 0.0:
+                    continue
+                frame[icon_y+y, icon_x+x] = current_icon[y,x,:3]
         return frame
 
     @classmethod
