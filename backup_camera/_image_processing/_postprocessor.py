@@ -6,26 +6,29 @@ na obraz dodatkowych napisów, linii pomocniczych, ikon ostrzegawczych czy
 obramowań zawierających rozpoznane obiekty. Wytworzoną przez siebie wersję 
 obrazu przesyła do interfejsu graficznego. 
 """
-from cv2.typing import MatLike
-import cv2 as cv
 import math
+
+import cv2 as cv
 import numpy as np
+from cv2.typing import MatLike
 
 from backup_camera._image_processing.image_parameters import ImageParameters, MAX_X_OFFSET, MAX_Y_OFFSET, MAX_SPACING
-from backup_camera._image_processing._classifier import DetectedObject
+from backup_camera._image_processing._classifier import DetectedObject, DetectableObjectType
 
 
 class Postprocessor:
-    LINES_COLOR = (24, 202, 247)
+    _LINES_COLOR = (24, 202, 247)
+    _CAR_BOUNDING_BOX_COLOR = (255, 0, 0)
+    _PEDESTRIAN_BOUNDING_BOX_COLOR = (0, 255, 0)
+    _CYCLIST_BOUNDING_BOX_COLOR = (0, 0, 255)
     
-    def postprocess(self, frame: MatLike|None, detection_metadata, image_size: tuple[int, int],
+    def postprocess(self, frame: MatLike|None, detection_metadata,
                     image_parameters: ImageParameters, application_mode) -> MatLike|None:
         if frame is None:
             return None
-        frame = self._draw_bounding_boxes(frame, detection_metadata)
         frame = self._draw_guidelines(frame, image_parameters, application_mode)
-        frame = cv.cvtColor(frame, cv.COLOR_BGR2RGB)
-        return cv.resize(frame, image_size)
+        frame = self._draw_bounding_boxes(frame, detection_metadata)
+        return cv.cvtColor(frame, cv.COLOR_BGR2RGB)
 
     def _draw_guidelines(self, frame, image_parameters, application_mode):
         from backup_camera.application import ApplicationMode # added here to avoid circural import
@@ -41,11 +44,23 @@ class Postprocessor:
             frame = cv.rectangle(
                 frame, 
                 (detected_object.x, detected_object.y, detected_object.width, detected_object.height), 
-                (255),
-                1
+                Postprocessor.get_bounding_box_color_for_object_type(detected_object.type),
+                6
             )
         return frame
 
+    @classmethod
+    def get_bounding_box_color_for_object_type(cls, object: DetectableObjectType):
+        match object:
+            case DetectableObjectType.CAR: 
+                return cls._CAR_BOUNDING_BOX_COLOR
+            case DetectableObjectType.PEDESTRIAN:
+                return cls._PEDESTRIAN_BOUNDING_BOX_COLOR
+            case DetectableObjectType.CYCLIST:
+                return cls._CYCLIST_BOUNDING_BOX_COLOR
+            case _:
+                return (255, 255, 255)
+ 
     def _apply_lines(self, frame, image_parameters: ImageParameters):
         width, height = frame.shape[1], frame.shape[0]
         single_line_height = int(0.11 * height)
@@ -85,62 +100,62 @@ class Postprocessor:
 
         point1 = (x_left + width_change, height - height_change)
         point2 = (x_left + single_line_angle + width_change, first_y+1 - height_change)
-        self._draw_line(frame, point1, point2, self.LINES_COLOR, line_thickness)
+        self._draw_line(frame, point1, point2, self._LINES_COLOR, line_thickness)
 
         point1 = (x_right + width_change, height - height_change)
         point2 = (x_right - single_line_angle + width_change, first_y+1 - height_change)
-        self._draw_line(frame, point1, point2, self.LINES_COLOR, line_thickness)
+        self._draw_line(frame, point1, point2, self._LINES_COLOR, line_thickness)
         
         y_coordinate = first_y + int(math.ceil(line_thickness/2)) + 1
         x_left = x_left + single_line_angle
         x_right = x_right - single_line_angle
         point1 = (x_left + width_change, y_coordinate - height_change)
         point2 = (x_left + horizontal_line + width_change, y_coordinate - height_change)
-        self._draw_line(frame, point1, point2, self.LINES_COLOR, line_thickness)
+        self._draw_line(frame, point1, point2, self._LINES_COLOR, line_thickness)
 
         point1 = (x_right + width_change, y_coordinate - height_change)
         point2 = (x_right - horizontal_line + width_change, y_coordinate - height_change)
-        self._draw_line(frame, point1, point2, self.LINES_COLOR, line_thickness)
+        self._draw_line(frame, point1, point2, self._LINES_COLOR, line_thickness)
 
         if image_parameters.number_of_lines > 1: # if number of lines = 2 or 3:
             point1 = (x_left + width_change, first_y - height_change)
             point2 = (x_left + single_line_angle + width_change, second_y+1 - height_change)
-            self._draw_line(frame, point1, point2, self.LINES_COLOR, line_thickness)
+            self._draw_line(frame, point1, point2, self._LINES_COLOR, line_thickness)
 
             point1 = (x_right + width_change, first_y - height_change)
             point2 = (x_right - single_line_angle + width_change, second_y+1 - height_change)
-            self._draw_line(frame, point1, point2, self.LINES_COLOR, line_thickness)
+            self._draw_line(frame, point1, point2, self._LINES_COLOR, line_thickness)
 
             y_coordinate = second_y + int(math.ceil(line_thickness/2)) + 1
             x_left = x_left + single_line_angle
             x_right = x_right - single_line_angle
             point1 = (x_left + width_change, y_coordinate - height_change)
             point2 = (x_left + horizontal_line + width_change, y_coordinate - height_change)
-            self._draw_line(frame, point1, point2, self.LINES_COLOR, line_thickness)
+            self._draw_line(frame, point1, point2, self._LINES_COLOR, line_thickness)
 
             point1 = (x_right + width_change, y_coordinate - height_change)
             point2 = (x_right - horizontal_line + width_change, y_coordinate - height_change)
-            self._draw_line(frame, point1, point2, self.LINES_COLOR, line_thickness)
+            self._draw_line(frame, point1, point2, self._LINES_COLOR, line_thickness)
 
         if image_parameters.number_of_lines == 3: # if number of lines = 3:
             point1 = (x_left + width_change, second_y - height_change)
             point2 = (x_left + single_line_angle + width_change, third_y+1 - height_change)
-            self._draw_line(frame, point1, point2, self.LINES_COLOR, line_thickness)
+            self._draw_line(frame, point1, point2, self._LINES_COLOR, line_thickness)
 
             point1 = (x_right + width_change, second_y - height_change)
             point2 = (x_right - single_line_angle + width_change, third_y+1 - height_change)
-            self._draw_line(frame, point1, point2, self.LINES_COLOR, line_thickness)
+            self._draw_line(frame, point1, point2, self._LINES_COLOR, line_thickness)
 
             y_coordinate = third_y + int(math.ceil(line_thickness/2)) + 1
             x_left = x_left + single_line_angle
             x_right = x_right - single_line_angle
             point1 = (x_left + width_change, y_coordinate - height_change)
             point2 = (x_left + horizontal_line + width_change, y_coordinate - height_change)
-            self._draw_line(frame, point1, point2, self.LINES_COLOR, line_thickness)
+            self._draw_line(frame, point1, point2, self._LINES_COLOR, line_thickness)
 
             point1 = (x_right + width_change, y_coordinate - height_change)
             point2 = (x_right - horizontal_line + width_change, y_coordinate - height_change)
-            self._draw_line(frame, point1, point2, self.LINES_COLOR, line_thickness)
+            self._draw_line(frame, point1, point2, self._LINES_COLOR, line_thickness)
 
 
     

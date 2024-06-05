@@ -14,9 +14,11 @@ from backup_camera._image_processing.image_parameters import ImageParameters
 
 class Preprocessor:
 
-    def preprocess(self, frame: MatLike|None, image_parameters: ImageParameters|None) -> MatLike|None:
+    def preprocess(self, frame: MatLike|None, image_parameters: ImageParameters|None, 
+                   image_size: tuple[int, int]) -> MatLike|None:
         if frame is None:
             return None
+        frame = cv.resize(frame, image_size)
         return self._preprocess_for_ui(frame, image_parameters)
     
     def _preprocess_for_ui(self, frame, image_parameters):

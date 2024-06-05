@@ -81,3 +81,10 @@ pip install -r ../requirements.txt
 py main.py
 ```
 
+## Jak pobrać playsound
+```bash
+pip install playsound@git+https://github.com/taconi/playsound
+```
+
+## Dzwięk użyty w alertach
+soft electronic ping by Metrolynn -- https://freesound.org/s/719210/ -- License: Creative Commons 0

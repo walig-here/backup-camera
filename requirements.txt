@@ -6,3 +6,4 @@ opencv-contrib-python==4.9.0.80
 opencv-python==4.9.0.80
 typing_extensions==4.10.0
 pillow
+git+https://github.com/taconi/playsound.git

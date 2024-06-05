@@ -5,7 +5,11 @@ przychodzących z interfejsu graficznego i wywołanie ich obsługi przy pomocy
 odpowiednich metod z pozostałych modułów (silnik przetwarzania obrazu 
 lub odbiornik obrazu).  
 """
+import asyncio
+import time
 from enum import Enum
+
+import playsound
 
 from backup_camera._image_processing.image_porcessor import ImageProcessingEngine
 from backup_camera._image_receiver import ImageReceiver
@@ -20,6 +24,8 @@ class ApplicationMode(Enum):
     
 
 class Application:
+    MIN_TIME_BETWEEN_ALERTS_SECONDS = 0.5
+    
     def __init__(self, display_size: tuple[int, int]) -> None:
         from backup_camera._user_interface.user_interface import UserInteface   # used here to avoid circural import
         
@@ -28,6 +34,8 @@ class Application:
         self._image_receiver = ImageReceiver()
         self._image_processor = ImageProcessingEngine(display_size, self._image_receiver, self._image_parameters, self)
         self._ui = UserInteface(display_size, self, self._image_processor)
+        self._muted = False
+        self._last_alert_time = None
 
     def get_config(self) -> dict[str]:
         return vars(self._image_parameters)
@@ -59,6 +67,7 @@ class Application:
     
     def change_mute_sounds(self):
         self._ui.mute()
+        self._muted = not self._muted
     
     def set_source(self, source_id: int):
         if source_id >= 0:
@@ -71,3 +80,15 @@ class Application:
                 self._image_receiver.start_capture(filename)
         elif source_id == NO_VIDEO_CAPTURE:
             self._image_receiver.end_capture()
+    
+    def play_alert(self) -> None:
+        if self._muted or (self._last_alert_time is not None and\
+           time.time() - self._last_alert_time < Application.MIN_TIME_BETWEEN_ALERTS_SECONDS):
+            return
+        self._last_alert_time = time.time()
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        loop.run_until_complete(self._play_sound('alert.wav'))
+
+    async def _play_sound(self, sound_file: str) -> None:
+        playsound.playsound(sound_file)
