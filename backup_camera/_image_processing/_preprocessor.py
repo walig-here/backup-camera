@@ -18,7 +18,7 @@ class Preprocessor:
                    image_size: tuple[int, int]) -> MatLike|None:
         if frame is None:
             return None
-        frame = cv.resize(frame, image_size)
+        frame = cv.resize(frame, image_size, interpolation=cv.INTER_CUBIC)
         return self._preprocess_for_ui(frame, image_parameters)
     
     def _preprocess_for_ui(self, frame, image_parameters):

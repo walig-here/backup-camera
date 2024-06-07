@@ -66,11 +66,11 @@ class Classifier:
     def __init__(self) -> None:
         self._cars_detector = _ObjectDetector(
             detected_object_type=DetectableObjectType.CAR,
-            dataset_path='haarcascade_license_plate_rus_16stages.xml',
+            dataset_path='cars.xml',
             scale_factor=1.05,
-            minium_neighbours=1,
-            minimum_size_pixels=(30, 30),
-            maximum_size_pixels=(200, 200)
+            minium_neighbours=6,
+            minimum_size_pixels=(100, 100),
+            maximum_size_pixels=(800, 800)
         )
         self._cyclist_detector = _ObjectDetector(
             detected_object_type=DetectableObjectType.CYCLIST,
@@ -117,4 +117,5 @@ class Classifier:
         if frame is None:
             return []
         grayscale_frame = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
+        grayscale_frame = cv.equalizeHist(grayscale_frame)
         return asyncio.run(self.detect_object_async(grayscale_frame, image_parameters, application_mode))

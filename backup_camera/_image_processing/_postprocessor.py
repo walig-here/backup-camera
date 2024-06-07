@@ -64,9 +64,9 @@ class Postprocessor:
         
         if car_detected:
             frame = self._draw_icon(frame, DetectableObjectType.CAR)
-        if pedestrian_detected:
+        elif pedestrian_detected:
             frame = self._draw_icon(frame, DetectableObjectType.PEDESTRIAN)
-        if cyclist_detected:
+        elif cyclist_detected:
             frame = self._draw_icon(frame, DetectableObjectType.CYCLIST)
             
         return frame
@@ -89,7 +89,7 @@ class Postprocessor:
                 current_icon = Postprocessor._CYCLIST_ICON
                 icon_width = current_icon.shape[1]
                 icon_height = current_icon.shape[0]
-                icon_x = frame.shape[1] // 2 + icon_width // 2
+                icon_x = frame.shape[1] // 2 - icon_width // 2
                 icon_y = frame.shape[0] - 10 - icon_height
             case _:
                 return frame
@@ -209,8 +209,6 @@ class Postprocessor:
             point2 = (x_right - horizontal_line + width_change, y_coordinate - height_change)
             self._draw_line(frame, point1, point2, self._LINES_COLOR, line_thickness)
 
-
-    
     def _draw_line(self, img, pt1, pt2, color, thickness):
         x1, y1, x2, y2 = *pt1, *pt2
         theta = math.pi - np.arctan2(y1 - y2, x1 - x2)

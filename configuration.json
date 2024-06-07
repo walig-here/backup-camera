@@ -1,6 +1,6 @@
 {
     "detect_cars": true,
-    "detect_bicycles": true,
+    "detect_bicycles": false,
     "detect_pedestrians": true,
     "brightness": 0,
     "contrast": 0,
