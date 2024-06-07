@@ -7,6 +7,7 @@ obramowań zawierających rozpoznane obiekty. Wytworzoną przez siebie wersję
 obrazu przesyła do interfejsu graficznego. 
 """
 import math
+import time
 
 import cv2 as cv
 import numpy as np
@@ -24,6 +25,12 @@ class Postprocessor:
     _CAR_ICON = cv.imread('car.png', cv.IMREAD_UNCHANGED)
     _PEDESTRIAN_ICON = cv.imread('pedestrian.png', cv.IMREAD_UNCHANGED)
     _CYCLIST_ICON = cv.imread('cyclist.png', cv.IMREAD_UNCHANGED)
+    
+    def __init__(self):
+        self._car_detected = False
+        self._pedestrian_detected = False
+        self._cyclist_detected = False
+        self._icon_display_start_time_seconds = None
     
     def postprocess(self, frame: MatLike|None, detection_metadata,
                     image_parameters: ImageParameters, application_mode) -> MatLike|None:
@@ -43,9 +50,11 @@ class Postprocessor:
         return frame
     
     def _draw_bounding_boxes_and_icons(self, frame, detection_metatada: list[DetectedObject]):
-        car_detected = False
-        pedestrian_detected = False
-        cyclist_detected = False
+        if self._icon_display_start_time_seconds is not None and \
+           time.time() - self._icon_display_start_time_seconds > 1:
+            self._car_detected = False
+            self._pedestrian_detected = False
+            self._cyclist_detected = False
         
         for detected_object in detection_metatada:
             frame = cv.rectangle(
@@ -56,22 +65,25 @@ class Postprocessor:
             )
             match detected_object.type:
                 case DetectableObjectType.CAR:
-                    car_detected = True
+                    self._car_detected = True
+                    self._icon_display_start_time_seconds = time.time()
                 case DetectableObjectType.PEDESTRIAN:
-                    pedestrian_detected = True
+                    self._pedestrian_detected = True
+                    self._icon_display_start_time_seconds = time.time()
                 case DetectableObjectType.CYCLIST:
-                    cyclist_detected = True
+                    self._cyclist_detected = True
+                    self._icon_display_start_time_seconds = time.time()
         
-        if car_detected:
+        if self._car_detected:
             frame = self._draw_icon(frame, DetectableObjectType.CAR)
-        elif pedestrian_detected:
+        elif self._pedestrian_detected:
             frame = self._draw_icon(frame, DetectableObjectType.PEDESTRIAN)
-        elif cyclist_detected:
+        elif self._cyclist_detected:
             frame = self._draw_icon(frame, DetectableObjectType.CYCLIST)
             
         return frame
 
-    def _draw_icon(self, frame: MatLike, detected_object_type: DetectableObjectType):    
+    def _draw_icon(self, frame: MatLike, detected_object_type: DetectableObjectType):
         match detected_object_type:
             case DetectableObjectType.CAR:
                 current_icon = Postprocessor._CAR_ICON

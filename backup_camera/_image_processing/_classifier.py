@@ -33,7 +33,7 @@ class _ObjectDetector:
     def __init__(self, detected_object_type: DetectableObjectType, dataset_path: str, scale_factor: float, 
                  minium_neighbours: int, minimum_size_pixels: tuple[int, int], 
                  maximum_size_pixels: tuple[int, int]) -> None:
-        self._classifier = cv.CascadeClassifier(dataset_path)
+        self._classifier = cv.CascadeClassifier('datasets/' + dataset_path)
         self._detected_object_type = detected_object_type
         self._scale_factor = scale_factor
         self._minimum_neighbours = minium_neighbours
@@ -66,11 +66,11 @@ class Classifier:
     def __init__(self) -> None:
         self._cars_detector = _ObjectDetector(
             detected_object_type=DetectableObjectType.CAR,
-            dataset_path='cars.xml',
+            dataset_path='cars-4.xml',
             scale_factor=1.05,
-            minium_neighbours=6,
+            minium_neighbours=4,
             minimum_size_pixels=(100, 100),
-            maximum_size_pixels=(800, 800)
+            maximum_size_pixels=(600, 600)
         )
         self._cyclist_detector = _ObjectDetector(
             detected_object_type=DetectableObjectType.CYCLIST,
