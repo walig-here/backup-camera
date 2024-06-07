@@ -19,7 +19,7 @@ from backup_camera._image_processing._classifier import DetectedObject, Detectab
 
 class Postprocessor:
     _LINES_COLOR = (24, 202, 247)
-    _CAR_BOUNDING_BOX_COLOR = (255, 0, 0)
+    _CAR_BOUNDING_BOX_COLOR = (1, 168, 255)
     _PEDESTRIAN_BOUNDING_BOX_COLOR = (0, 255, 0)
     _CYCLIST_BOUNDING_BOX_COLOR = (0, 0, 255)
     _CAR_ICON = cv.imread('car.png', cv.IMREAD_UNCHANGED)
@@ -61,7 +61,7 @@ class Postprocessor:
                 frame, 
                 (detected_object.x, detected_object.y, detected_object.width, detected_object.height), 
                 Postprocessor.get_bounding_box_color_for_object_type(detected_object.type),
-                6
+                4
             )
             match detected_object.type:
                 case DetectableObjectType.CAR:

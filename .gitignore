@@ -3,3 +3,4 @@
 *.drawio
 *__pycache__/
 *.mp4
+.vscode
