@@ -10,6 +10,8 @@ MAX_Y_OFFSET = 100
 MIN_Y_OFFSET = 0
 MIN_TILT = 0
 MAX_TILT = 100
+MIN_Y_LINE_HEIGHT = 0
+MAX_Y_LINE_HEIGHT = 100
 NUMBER_OF_LINES_OPTIONS = [1, 2, 3]
 DEFAULT_NUMBER_OF_LINES = 3
 
@@ -28,6 +30,7 @@ class ImageParameters:
     y_offset: int = 0
     spacing: int = 0
     tilt: int = 0
+    y_line_height: int = 0
 
     def save_to_file(self):
         with open('configuration.json', 'w') as file:
