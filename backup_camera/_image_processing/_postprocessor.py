@@ -158,18 +158,4 @@ class Postprocessor:
     def _adjust_x_coordinates_with_angle(self, x_left, x_right, single_line_angle):
         x_left = x_left + single_line_angle
         x_right = x_right - single_line_angle
-        return x_left, x_right     
-
-    
-    def _draw_line(self, img, pt1, pt2, color, thickness):
-        x1, y1, x2, y2 = *pt1, *pt2
-        theta = math.pi - np.arctan2(y1 - y2, x1 - x2)
-        dx = int(math.sin(theta) * thickness / 2)
-        dy = int(math.cos(theta) * thickness / 2)
-        pts = [
-            [x1 + dx, y1 + dy],
-            [x1 - dx, y1 - dy],
-            [x2 - dx, y2 - dy],
-            [x2 + dx, y2 + dy]
-        ]
-        cv.fillPoly(img, [np.array(pts)], color)
+        return x_left, x_right
