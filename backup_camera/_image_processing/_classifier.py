@@ -82,11 +82,11 @@ class Classifier:
         )
         self._pedestrians_detector = _ObjectDetector(
             detected_object_type=DetectableObjectType.PEDESTRIAN,
-            dataset_path='haarcascade_license_plate_rus_16stages.xml',
-            scale_factor=1.05,
-            minium_neighbours=1,
-            minimum_size_pixels=(30, 30),
-            maximum_size_pixels=(200, 200)
+            dataset_path='pedestrians-1.xml',
+            scale_factor=1.06,
+            minium_neighbours=6,
+            minimum_size_pixels=(50, 150),
+            maximum_size_pixels=(300, 900)
         )
     
     async def detect_object_async(self, frame: MatLike|None, image_parameters: ImageParameters, 

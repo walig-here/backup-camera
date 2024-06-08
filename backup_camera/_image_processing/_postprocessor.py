@@ -20,7 +20,7 @@ from backup_camera._image_processing._classifier import DetectedObject, Detectab
 class Postprocessor:
     _LINES_COLOR = (24, 202, 247)
     _CAR_BOUNDING_BOX_COLOR = (1, 168, 255)
-    _PEDESTRIAN_BOUNDING_BOX_COLOR = (0, 255, 0)
+    _PEDESTRIAN_BOUNDING_BOX_COLOR = (0, 0, 255)
     _CYCLIST_BOUNDING_BOX_COLOR = (0, 0, 255)
     _CAR_ICON = cv.imread('car.png', cv.IMREAD_UNCHANGED)
     _PEDESTRIAN_ICON = cv.imread('pedestrian.png', cv.IMREAD_UNCHANGED)
