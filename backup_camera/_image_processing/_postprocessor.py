@@ -11,7 +11,8 @@ import cv2 as cv
 import math
 import numpy as np
 
-from backup_camera._image_processing.image_parameters import ImageParameters, MAX_X_OFFSET, MAX_Y_OFFSET, MAX_SPACING
+from backup_camera._image_processing.image_parameters import ImageParameters, \
+    MAX_X_OFFSET, MAX_Y_OFFSET, MAX_SPACING, MAX_TILT, MAX_Y_LINE_HEIGHT
 from backup_camera._image_processing._classifier import DetectedObject
 
 
@@ -51,17 +52,20 @@ class Postprocessor:
 
     def _apply_lines(self, frame, image_parameters: ImageParameters):
         width, height = frame.shape[1], frame.shape[0]
-        single_line_height = int(0.11 * height)
-        line_thickness = int(0.01 * width)
+        
+        single_line_height = int(0.08*height)
+        remaining_height = height - single_line_height * 3
+        single_line_height = int(single_line_height + remaining_height / image_parameters.number_of_lines / MAX_Y_LINE_HEIGHT)
+
+        line_thickness = int(width / 250)
         lines_width = int(0.1 * width)
-        horizontal_line = int(lines_width * 0.05)
+        horizontal_line = int(lines_width*0.25)
         
         x_center = width // 2
         x_left = x_center - lines_width // 2
         x_right = x_center + lines_width // 2
 
-        single_line_angle = int((x_center - x_left) / 2 * 0.25)
-        y = height - single_line_height
+        single_line_angle = int((x_center - x_left) / 2 * image_parameters.tilt / (MAX_TILT / 6))
 
         # CALCULATING HOW 1 on Y OFFSET SLIDER CORRESPONDS TO HEIGHT CHANGE:
         height_remaining = height - image_parameters.number_of_lines * single_line_height
@@ -82,18 +86,23 @@ class Postprocessor:
         width_change = width_remaining * image_parameters.x_offset // MAX_X_OFFSET
         # ------------------------------------------------------------------
 
+        vertical_line_up_limit = height - single_line_height
+        vertical_line_down_limit = height
+
         for i in range(image_parameters.number_of_lines):
             if i + 1 > image_parameters.number_of_lines:
                 break
 
-            self._draw_vertical_left_line_points(frame, line_thickness, x_left, y,
+            self._draw_vertical_left_line_points(frame, line_thickness, 
+                                                 x_left, vertical_line_up_limit, vertical_line_down_limit,
                                                                width_change, height, height_change, single_line_angle)
 
-            self._draw_vertical_right_line_points(frame, line_thickness, x_right, y,
+            self._draw_vertical_right_line_points(frame, line_thickness, 
+                                                  x_right, vertical_line_up_limit, vertical_line_down_limit,
                                                                 width_change, height, height_change, single_line_angle)
 
-            y_coordinate = y + int(math.ceil(line_thickness/2)) + 1
-            #x_left, x_right = self._adjust_x_coordinates_with_angle(x_left, x_right, single_line_angle)
+            y_coordinate = vertical_line_up_limit + int(math.ceil(line_thickness/2)) + 1
+            x_left, x_right = self._adjust_x_coordinates_with_angle(x_left, x_right, single_line_angle)
 
             self._draw_horizontal_left_line_points(frame, line_thickness, x_left, y_coordinate, 
                                                    horizontal_line, width_change, height_change)
@@ -101,28 +110,29 @@ class Postprocessor:
             self._draw_horizontal_right_line_points(frame, line_thickness, x_right, y_coordinate, 
                                                     horizontal_line, width_change, height_change)
             
-            y -= single_line_height
+            vertical_line_up_limit -= single_line_height
+            vertical_line_down_limit -= single_line_height
         
 
     def _draw_vertical_left_line_points(self, frame, line_thickness,
-                                               x_left, y,
+                                               x_left, vertical_line_up_limit, vertical_line_down_limit,
                                                width_change, 
                                                height, height_change, single_line_angle):
-        point1 = (x_left + width_change, height - height_change)
-        point2 = (x_left + single_line_angle + width_change, y+1 - height_change)
+        point1 = (x_left + width_change, vertical_line_down_limit - height_change)
+        point2 = (x_left + single_line_angle + width_change, vertical_line_up_limit + 1 - height_change)
 
-        self._draw_line(frame, point1, point2, self.LINES_COLOR, line_thickness)
+        cv.line(frame, point1, point2, self.LINES_COLOR, line_thickness, lineType=cv.LINE_AA)
         return point1, point2
     
 
     def _draw_vertical_right_line_points(self, frame, line_thickness,
-                                                x_right, y,
+                                                x_right, vertical_line_up_limit, vertical_line_down_limit,
                                                 width_change,
                                                 height, height_change, single_line_angle):
-        point1 = (x_right + width_change, height - height_change)
-        point2 = (x_right - single_line_angle + width_change, y+1 - height_change)
+        point1 = (x_right + width_change, vertical_line_down_limit - height_change)
+        point2 = (x_right - single_line_angle + width_change, vertical_line_up_limit + 1 - height_change)
 
-        self._draw_line(frame, point1, point2, self.LINES_COLOR, line_thickness)   
+        cv.line(frame, point1, point2, self.LINES_COLOR, line_thickness, lineType=cv.LINE_AA)   
         return point1, point2                           
 
 
@@ -131,7 +141,7 @@ class Postprocessor:
         point1 = (x_left + width_change, y_coordinate - height_change)
         point2 = (x_left + horizontal_line + width_change, y_coordinate - height_change)
 
-        self._draw_line(frame, point1, point2, self.LINES_COLOR, line_thickness)
+        cv.line(frame, point1, point2, self.LINES_COLOR, line_thickness, lineType=cv.LINE_AA)
         return point1, point2
     
 
@@ -140,7 +150,7 @@ class Postprocessor:
         point1 = (x_right + width_change, y_coordinate - height_change)
         point2 = (x_right - horizontal_line + width_change, y_coordinate - height_change)
 
-        self._draw_line(frame, point1, point2, self.LINES_COLOR, line_thickness)
+        cv.line(frame, point1, point2, self.LINES_COLOR, line_thickness, lineType=cv.LINE_AA)
         return point1, point2
 
 
