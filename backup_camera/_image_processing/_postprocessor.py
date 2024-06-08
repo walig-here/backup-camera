@@ -54,8 +54,9 @@ class Postprocessor:
         width, height = frame.shape[1], frame.shape[0]
         
         single_line_height = int(0.08*height)
-        remaining_height = height - single_line_height * 3
-        single_line_height = int(single_line_height + remaining_height / image_parameters.number_of_lines / MAX_Y_LINE_HEIGHT)
+        remaining_height_for_3rd_line = height - single_line_height * 3
+        y_line_height_add = remaining_height_for_3rd_line * image_parameters.y_line_height / MAX_Y_LINE_HEIGHT
+        single_line_height = int(single_line_height + y_line_height_add / 3)
 
         line_thickness = int(width / 250)
         lines_width = int(0.1 * width)
