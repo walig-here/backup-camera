@@ -53,19 +53,15 @@ class Postprocessor:
         width, height = frame.shape[1], frame.shape[0]
         single_line_height = int(0.11 * height)
         line_thickness = int(0.01 * width)
-        lines_width = int(0.2 * width)
+        lines_width = int(0.1 * width)
         horizontal_line = int(lines_width * 0.05)
         
         x_center = width // 2
         x_left = x_center - lines_width // 2
         x_right = x_center + lines_width // 2
 
-        single_line_angle = int((x_center - x_left) / 2 * 0)
-
-        first_y = height - single_line_height
-        second_y = first_y - single_line_height
-        third_y = second_y - single_line_height
-        
+        single_line_angle = int((x_center - x_left) / 2 * 0.25)
+        y = height - single_line_height
 
         # CALCULATING HOW 1 on Y OFFSET SLIDER CORRESPONDS TO HEIGHT CHANGE:
         height_remaining = height - image_parameters.number_of_lines * single_line_height
@@ -86,90 +82,48 @@ class Postprocessor:
         width_change = width_remaining * image_parameters.x_offset // MAX_X_OFFSET
         # ------------------------------------------------------------------
 
-        point1, point2 = self._draw_vertical_left_line_points(frame, line_thickness,
-                                                               x_left, first_y,
+        for i in range(image_parameters.number_of_lines):
+            if i + 1 > image_parameters.number_of_lines:
+                break
+
+            self._draw_vertical_left_line_points(frame, line_thickness, x_left, y,
                                                                width_change, height, height_change, single_line_angle)
 
-        point1, point2 = self._draw_vertical_right_line_points(frame, line_thickness,
-                                                                x_right, first_y,
+            self._draw_vertical_right_line_points(frame, line_thickness, x_right, y,
                                                                 width_change, height, height_change, single_line_angle)
+
+            y_coordinate = y + int(math.ceil(line_thickness/2)) + 1
+            #x_left, x_right = self._adjust_x_coordinates_with_angle(x_left, x_right, single_line_angle)
+
+            self._draw_horizontal_left_line_points(frame, line_thickness, x_left, y_coordinate, 
+                                                   horizontal_line, width_change, height_change)
         
+            self._draw_horizontal_right_line_points(frame, line_thickness, x_right, y_coordinate, 
+                                                    horizontal_line, width_change, height_change)
+            
+            y -= single_line_height
         
-        y_coordinate = first_y + int(math.ceil(line_thickness/2)) + 1
-        x_left, x_right = self._adjust_x_coordinates_with_angle(x_left, x_right, single_line_angle)
-        point1, point2 = self._draw_horizontal_left_line_points(frame, line_thickness,
-                                                                x_left, y_coordinate, horizontal_line, 
-                                                                width_change, height_change)
-
-        point1, point2 = self._draw_horizontal_right_line_points(frame, line_thickness,
-                                                                 x_right, y_coordinate, horizontal_line, 
-                                                                 width_change, height_change)
-        
-        if image_parameters.number_of_lines > 1: # if number of lines = 2 or 3:
-            point1, point2 = self._draw_vertical_left_line_points(frame, line_thickness,
-                                                                  x_left, second_y,
-                                                                  width_change, height, height_change, single_line_angle)
-
-            point1, point2 = self._draw_vertical_right_line_points(frame, line_thickness,
-                                                                   x_right, second_y,
-                                                                   width_change, height, height_change, single_line_angle)
-
-            y_coordinate = second_y + int(math.ceil(line_thickness/2)) + 1
-            x_left, x_right = self._adjust_x_coordinates_with_angle(x_left, x_right, single_line_angle)
-            point1, point2 = self._draw_horizontal_left_line_points(frame, line_thickness,
-                                                                    x_left, y_coordinate, horizontal_line, 
-                                                                    width_change, height_change)
-
-            point1, point2 = self._draw_horizontal_right_line_points(frame, line_thickness,
-                                                                     x_right, y_coordinate, horizontal_line, 
-                                                                     width_change, height_change)
-
-        if image_parameters.number_of_lines == 3: # if number of lines = 3:
-            point1, point2 = self._draw_vertical_left_line_points(frame, line_thickness,
-                                                                    x_left, third_y,
-                                                                    width_change, height, height_change, single_line_angle)
-
-            point1, point2 = self._draw_vertical_right_line_points(frame, line_thickness,
-                                                                    x_right, third_y,
-                                                                    width_change, height, height_change, single_line_angle)
-
-            y_coordinate = third_y + int(math.ceil(line_thickness/2)) + 1
-            x_left, x_right = self._adjust_x_coordinates_with_angle(x_left, x_right, single_line_angle)
-
-            point1, point2 = self._draw_horizontal_left_line_points(frame, line_thickness,
-                                                                    x_left, y_coordinate, horizontal_line, 
-                                                                    width_change, height_change)
-
-            point1, point2 = self._draw_horizontal_right_line_points(frame, line_thickness,
-                                                                     x_right, y_coordinate, horizontal_line, 
-                                                                     width_change, height_change)
 
     def _draw_vertical_left_line_points(self, frame, line_thickness,
-                                               x_left, first_y,
+                                               x_left, y,
                                                width_change, 
                                                height, height_change, single_line_angle):
         point1 = (x_left + width_change, height - height_change)
-        point2 = (x_left + single_line_angle + width_change, first_y+1 - height_change)
+        point2 = (x_left + single_line_angle + width_change, y+1 - height_change)
 
         self._draw_line(frame, point1, point2, self.LINES_COLOR, line_thickness)
         return point1, point2
     
 
     def _draw_vertical_right_line_points(self, frame, line_thickness,
-                                                x_right, first_y,
+                                                x_right, y,
                                                 width_change,
                                                 height, height_change, single_line_angle):
         point1 = (x_right + width_change, height - height_change)
-        point2 = (x_right - single_line_angle + width_change, first_y+1 - height_change)
+        point2 = (x_right - single_line_angle + width_change, y+1 - height_change)
 
         self._draw_line(frame, point1, point2, self.LINES_COLOR, line_thickness)   
-        return point1, point2
-
-
-    def _adjust_x_coordinates_with_angle(self, x_left, x_right, single_line_angle):
-        x_left = x_left + single_line_angle
-        x_right = x_right - single_line_angle
-        return x_left, x_right                                
+        return point1, point2                           
 
 
     def _draw_horizontal_left_line_points(self, frame, line_thickness, 
@@ -189,6 +143,11 @@ class Postprocessor:
         self._draw_line(frame, point1, point2, self.LINES_COLOR, line_thickness)
         return point1, point2
 
+
+    def _adjust_x_coordinates_with_angle(self, x_left, x_right, single_line_angle):
+        x_left = x_left + single_line_angle
+        x_right = x_right - single_line_angle
+        return x_left, x_right     
 
     
     def _draw_line(self, img, pt1, pt2, color, thickness):
