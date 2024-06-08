@@ -6,9 +6,10 @@
     "contrast": 0,
     "saturation": 0,
     "guidelines_hidden": false,
-    "number_of_lines": 2,
-    "x_offset": -15,
+    "number_of_lines": 3,
+    "x_offset": -79,
     "y_offset": 0,
-    "spacing": 100,
-    "tilt": 54
+    "spacing": 74,
+    "tilt": 26,
+    "y_line_height": 10
 }

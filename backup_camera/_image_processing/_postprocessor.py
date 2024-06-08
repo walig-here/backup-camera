@@ -135,7 +135,7 @@ class Postprocessor:
         y_line_height_add = remaining_height_for_3rd_line * image_parameters.y_line_height / MAX_Y_LINE_HEIGHT
         single_line_height = int(single_line_height + y_line_height_add / 3)
 
-        line_thickness = int(width / 250)
+        line_thickness = int(width / 100)
         lines_width = int(0.1 * width)
         horizontal_line = int(lines_width*0.25)
         
@@ -199,7 +199,7 @@ class Postprocessor:
         point1 = (x_left + width_change, vertical_line_down_limit - height_change)
         point2 = (x_left + single_line_angle + width_change, vertical_line_up_limit + 1 - height_change)
 
-        cv.line(frame, point1, point2, self.LINES_COLOR, line_thickness, lineType=cv.LINE_AA)
+        cv.line(frame, point1, point2, self._LINES_COLOR, line_thickness, lineType=cv.LINE_AA)
         return point1, point2
     
 
@@ -210,7 +210,7 @@ class Postprocessor:
         point1 = (x_right + width_change, vertical_line_down_limit - height_change)
         point2 = (x_right - single_line_angle + width_change, vertical_line_up_limit + 1 - height_change)
 
-        cv.line(frame, point1, point2, self.LINES_COLOR, line_thickness, lineType=cv.LINE_AA)   
+        cv.line(frame, point1, point2, self._LINES_COLOR, line_thickness, lineType=cv.LINE_AA)   
         return point1, point2                           
 
 
@@ -219,7 +219,7 @@ class Postprocessor:
         point1 = (x_left + width_change, y_coordinate - height_change)
         point2 = (x_left + horizontal_line + width_change, y_coordinate - height_change)
 
-        cv.line(frame, point1, point2, self.LINES_COLOR, line_thickness, lineType=cv.LINE_AA)
+        cv.line(frame, point1, point2, self._LINES_COLOR, line_thickness, lineType=cv.LINE_AA)
         return point1, point2
     
 
@@ -228,7 +228,7 @@ class Postprocessor:
         point1 = (x_right + width_change, y_coordinate - height_change)
         point2 = (x_right - horizontal_line + width_change, y_coordinate - height_change)
 
-        cv.line(frame, point1, point2, self.LINES_COLOR, line_thickness, lineType=cv.LINE_AA)
+        cv.line(frame, point1, point2, self._LINES_COLOR, line_thickness, lineType=cv.LINE_AA)
         return point1, point2
 
 
