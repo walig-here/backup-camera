@@ -1,15 +1,15 @@
 {
-    "detect_cars": true,
+    "detect_cars": false,
     "detect_bicycles": false,
     "detect_pedestrians": true,
     "brightness": 0,
     "contrast": 0,
     "saturation": 0,
-    "guidelines_hidden": false,
+    "guidelines_hidden": true,
     "number_of_lines": 3,
-    "x_offset": -79,
+    "x_offset": -18,
     "y_offset": 0,
     "spacing": 74,
-    "tilt": 26,
-    "y_line_height": 10
+    "tilt": 25,
+    "y_line_height": 0
 }

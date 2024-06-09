@@ -82,7 +82,7 @@ class Classifier:
         )
         self._pedestrians_detector = _ObjectDetector(
             detected_object_type=DetectableObjectType.PEDESTRIAN,
-            dataset_path='pedestrians-1.xml',
+            dataset_path='haarcascade_fullbody.xml',
             scale_factor=1.06,
             minium_neighbours=6,
             minimum_size_pixels=(50, 150),
@@ -118,4 +118,5 @@ class Classifier:
             return []
         grayscale_frame = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
         grayscale_frame = cv.equalizeHist(grayscale_frame)
+        grayscale_frame = cv.GaussianBlur(grayscale_frame, (5,5), 0)
         return asyncio.run(self.detect_object_async(grayscale_frame, image_parameters, application_mode))

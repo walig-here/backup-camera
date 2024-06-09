@@ -19,15 +19,8 @@ class Preprocessor:
         if frame is None:
             return None
         frame = cv.resize(frame, image_size, interpolation=cv.INTER_CUBIC)
-        return self._preprocess_for_ui(frame, image_parameters)
-    
-    def _preprocess_for_ui(self, frame, image_parameters):
         frame = self.apply_saturation(frame, image_parameters.saturation)
         frame = self.apply_brightness_contrast(frame, image_parameters.brightness, image_parameters.contrast)
-        
-        return frame
-    
-    def _preprocess_for_classifier(self, frame):
         return frame
 
     def apply_saturation(self, frame: MatLike, saturation_value: int) -> MatLike:

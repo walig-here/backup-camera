@@ -135,7 +135,7 @@ class Postprocessor:
         y_line_height_add = remaining_height_for_3rd_line * image_parameters.y_line_height / MAX_Y_LINE_HEIGHT
         single_line_height = int(single_line_height + y_line_height_add / 3)
 
-        line_thickness = int(width / 100)
+        line_thickness = int(width / 200)
         lines_width = int(0.1 * width)
         horizontal_line = int(lines_width*0.25)
         
